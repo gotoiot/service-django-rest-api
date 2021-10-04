@@ -13,3 +13,22 @@ Accept: {{accept_type}}
 @suffix_format = json
 # @suffix_format = api
 GET {{host_api}}/snippets.{{suffix_format}}
+
+### 
+
+@snippet_id = 2
+@user = user2
+@pass = s3cr3t_p4ss
+PUT  {{host_api}}/snippets/{{snippet_id}}/
+Accept: {{accept_type}}
+Content-Type: application/json
+Authorization: Basic {{user}}:{{pass}}
+
+{
+    "title": "Python Hello World examples!",
+    "code": "#include <stdio.h>\r\nprintf(\"Hello %s\"!, \"World\");",
+    "linenos": false,
+    "language": "c",
+    "style": "material",
+    "owner": "user2"
+}

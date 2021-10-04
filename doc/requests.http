@@ -1,0 +1,15 @@
+
+@host_api = http://localhost:8000
+
+### GET ALL SNIPPETS WITH ACCEPT HEADER
+
+@accept_type = application/json
+# @accept_type = text/html
+GET {{host_api}}/snippets
+Accept: {{accept_type}}
+
+### GET ALL SNIPPETS WITH SUFFIX FORMAT
+
+@suffix_format = json
+# @suffix_format = api
+GET {{host_api}}/snippets.{{suffix_format}}

@@ -5,8 +5,13 @@ from snippets.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
 
 
 class SnippetSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    The value extra_kwargs is needed when the app is namespaced like 'snippets:XX' 
+    to link the object URL with the correct view
+    """
+
     owner = serializers.ReadOnlyField(source='owner.username')
-    highlight = serializers.HyperlinkedIdentityField(lookup_field="pk", view_name='snippets:snippet-highlight', format='html')
+    highlight = serializers.HyperlinkedIdentityField(view_name='snippets:snippet-highlight', format='html')
 
     class Meta:
         model = Snippet
@@ -17,12 +22,16 @@ class SnippetSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    snippets = serializers.HyperlinkedRelatedField(lookup_field="pk", many=True, view_name='snippets:snippet-detail', read_only=True)
-    url = serializers.HyperlinkedIdentityField(view_name='snippets:user-detail', lookup_field='pk')
+    """
+    The value extra_kwargs is needed when the app is namespaced like 'snippets:XX' 
+    to link the object URL with the correct view
+    """
+    
+    snippets = serializers.HyperlinkedRelatedField(view_name='snippets:snippet-detail', many=True, read_only=True)
 
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'snippets')
         extra_kwargs = {
-            'url': {'view_name': 'snippet:user-detail', 'lookup_field': 'pk'},
+            'url': {'view_name': 'snippets:user-detail', 'lookup_field': 'pk'},
         }

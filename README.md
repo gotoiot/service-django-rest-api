@@ -12,3 +12,6 @@ Así mismo, y debido a que la carpeta de `data` que contiene la base de datos es
 
 Por la misma razon que los permisos, es conveniente ejecutar los comandos con el usuario `gotoiot` creado dentro del contendor. Para ello, cada vez que se tenga que ejecutar un comando dentro del contenedor, poner este prefijo `docker-compose run code-api su gotoiot -c 'python manage.py COMMAND'`.
 
+### Sobre Django
+
+En estos slides hay una buena y simple info sobre lo que puede hacer Django REST Framework. Sobre todo agrega la parte de filtrado, ordering, y busqueda que estan muy buenas.

@@ -20,7 +20,7 @@ class Assesment(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
-    desription = models.TextField(max_length=500)
+    description = models.TextField(max_length=500)
     thanks_message = models.TextField(
         max_length=100, 
         default='<p>Thanks for complete the assesment!</p>')
@@ -83,7 +83,7 @@ class Taker(models.Model):
     )
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    age = models.IntegerField(blank=True)
+    age = models.IntegerField(blank=True, null=True)
     experience_years = models.IntegerField(blank=True, default=0)
     current_position = models.CharField(max_length=200, blank=True, default='')
     mobile_phone = models.CharField(max_length=50, blank=True, default='')
@@ -158,4 +158,4 @@ class Option(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.title
+        return f"{self.title} for {self.question.title}"

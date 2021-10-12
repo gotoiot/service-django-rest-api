@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.api_root, name='assesments-home'),
     path('assesments/', views.AssesmentList.as_view(), name='assesment-list'),
     path('assesments/<int:pk>/', views.AssesmentDetail.as_view(), name='assesment-detail'),
+    path('assesments/<int:pk>/create', views.InstanceCreate.as_view(), name='instance-creation'),
     path('instances/', views.InstanceList.as_view(), name='instance-list'),
     path('instances/<uuid:pk>/', views.InstanceDetail.as_view(), name="instance-detail"),
     path('takers/', views.TakerList.as_view(), name='taker-list'),

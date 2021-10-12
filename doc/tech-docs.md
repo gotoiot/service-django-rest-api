@@ -19,8 +19,10 @@ Desde el lado del AssesmentTaker, en el momento que está listo para tomar un as
 * `/instances/<id>/start` - Inicia el test y empieza el countdown (POST)
 * `/instances/<id>/end` - Finaliza una instancia (POST)
 * `/instances/<id>/result` - Muestra el resultado de una instancia (GET)
-* `/instances/<id>/questions` - Muestra una lista con las preguntas de una instancia (GET)
-* `/instances/<id>/questions/<id>` - Muestra el detalle con la pregunta de una instancia (GET). Envia el resultado de una respuesta (POST).
+* `/assesments/<id>/questions` - Muestra una lista con las preguntas de una instancia (GET)
+* `/assesments/<id>/questions/<id>` - Muestra el detalle con la pregunta de una instancia (GET). Envia el resultado de una respuesta (POST).
 * `/takers` - Muestra una lista con todos los tests takers que realizaron assesments (GET)
 * `/takers/<id>` - Muestra el detalle de un taker específico (GET)
 * `/status?id=xx` - Recibe como query argument el id de la instancia (GET)
+
+# Correlation One API Request/responses

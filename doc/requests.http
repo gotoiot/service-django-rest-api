@@ -32,3 +32,11 @@ Authorization: Basic {{user}}:{{pass}}
     "style": "material",
     "owner": "user2"
 }
+
+###
+
+{
+    "first_name": "Juan",
+    "last_name": "Palote",
+    "email": "jaunpalote@gmail.com"
+}

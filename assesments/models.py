@@ -36,18 +36,21 @@ class Assesment(models.Model):
         """String for representing the Model object."""
         return self.title
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Instance(models.Model):
     """Model representing a specific instance of an assesment """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     duration = models.IntegerField(default=60)
     score = models.IntegerField(default=0)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateTimeField(null=True, blank=True, default='')
+    end_date = models.DateTimeField(null=True, blank=True, default='')
     active = models.BooleanField(default=False)
-    progress_status = models.JSONField()
-    assesment = models.ForeignKey('Assesment', on_delete=models.CASCADE)
-    taker = models.ForeignKey('Taker', on_delete=models.RESTRICT, null=True)
+    progress_status = models.JSONField(null=True, blank=True)
+    assesment = models.ForeignKey('Assesment', on_delete=models.CASCADE, default='')
+    taker = models.ForeignKey('Taker', on_delete=models.RESTRICT, default='')
 
     def __str__(self):
         """String for representing the Model object."""
@@ -68,6 +71,9 @@ class Instance(models.Model):
     def update_progress(self):
         """ receive each question and updates progress_status """
         pass
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Taker(models.Model):
@@ -112,6 +118,9 @@ class Taker(models.Model):
     def is_taker_available(self, taker):
         """ Evaluate that taker has not opened instances """
         return False
+    
+    class Meta:
+        ordering = ['-id']
 
 
 class Question(models.Model):
@@ -136,6 +145,9 @@ class Question(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.title
+    
+    class Meta:
+        ordering = ['-id']
 
 
 class Option(models.Model):
@@ -159,3 +171,6 @@ class Option(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f"{self.title} for {self.question.title}"
+    
+    class Meta:
+        ordering = ['-id']

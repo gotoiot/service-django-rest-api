@@ -1,12 +1,23 @@
+from datetime import datetime, timedelta
 from django.contrib.auth.models import User
-from rest_framework import generics, permissions
+from django.http import Http404
+from rest_framework import generics, permissions, renderers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import renderers
 
-from assesments.models import Assesment, Instance, Taker, Question, Option
-from assesments.serializers import AssesmentSerializer, InstanceSerializer, TakerSerializer, QuestionSerializer, OptionSerializer
+from assesments.models import Assesment, Instance, Option, Question, Taker
+from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
+                                    OptionSerializer, QuestionSerializer,
+                                    TakerSerializer)
+
+
+def _get_model_by_pk(model, pk):
+    try:
+        return model.objects.get(pk=pk)
+    except model.DoesNotExist:
+        raise Http404
 
 
 @api_view(['GET'])
@@ -42,6 +53,24 @@ class InstanceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+class InstanceTest(APIView):
+    def get(self, request, pk, format=None):
+        instance = _get_model_by_pk(Instance, pk)
+        return Response({'uuid': instance.id, 'active': instance.active})
+
+
+class InstanceStart(APIView):
+    def get(self, request, pk, format=None):
+        instance = _get_model_by_pk(Instance, pk)
+        instance.start_time = datetime.now()
+        instance.end_time = datetime.now() + timedelta(minutes=instance.duration)
+        instance.active = True
+        instance.save()
+        first_question = instance.assesment.question_set.first()
+        # TODO this response must be a Serializer data
+        return Response({'uuid': instance.id, 'active': instance.active})
 
 
 class TakerList(generics.ListCreateAPIView):

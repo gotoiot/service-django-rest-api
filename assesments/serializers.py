@@ -5,7 +5,7 @@ from assesments.models import Assesment, Instance, Taker, Question, Option
 
 
 class AssesmentSerializer(serializers.HyperlinkedModelSerializer):
-
+    # TODO find a way to get question count here
     class Meta:
         model = Assesment
         fields = ('url', 'id', 'created', 'title', 'description', 'language', 'thanks_message',)
@@ -15,19 +15,18 @@ class AssesmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class InstanceSerializer(serializers.HyperlinkedModelSerializer):
-    # assesment = serializers.ReadOnlyField(source='assesment.url')
-    # taker = serializers.ReadOnlyField(source='taker.url')
+    assesment = serializers.HyperlinkedRelatedField(view_name='assesments:assesment-detail', lookup_field='pk', read_only=True)
+    taker = serializers.HyperlinkedRelatedField(view_name='assesments:taker-detail', lookup_field='pk', read_only=True)
 
     class Meta:
         model = Instance
-        fields = ('url', 'id', 'duration', 'score', 'start_date', 'end_date', 'active', 'progress_status')
+        fields = ('url', 'id', 'duration', 'score', 'start_date', 'end_date', 'active', 'progress_status', 'assesment', 'taker')
         extra_kwargs = {
             'url': {'view_name': 'assesments:instance-detail', 'lookup_field': 'pk'},
         }
 
 
 class TakerSerializer(serializers.HyperlinkedModelSerializer):
-    # instances = serializers.ReadOnlyField(source='instance')
 
     class Meta:
         model = Taker
@@ -35,6 +34,14 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assesments:taker-detail', 'lookup_field': 'pk'},
         }
+
+    def create(self, validated_data):
+        taker = Taker.objects.filter(email=validated_data['email']).first()
+        if taker:
+            if taker.first_name != validated_data['first_name'] or taker.last_name != validated_data['last_name']:
+                raise serializers.ValidationError("The email registered and taker names do not match")
+            return taker
+        return Taker.objects.create(**self.validated_data)
 
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):

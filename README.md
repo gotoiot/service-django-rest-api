@@ -122,3 +122,8 @@ También podés mirar todas las personas que han participado en la [lista comple
 ## Licencia 📄
 
 Este proyecto está bajo Licencia ([MIT](https://choosealicense.com/licenses/mit/)). Podés ver el archivo [LICENSE.md](LICENSE.md) para más detalles sobre el uso de este material.
+
+# TODOs
+
+* Armar los requests con Postman
+* Not permitir que un taker tome mas de un test al mismo tiempo

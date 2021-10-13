@@ -156,6 +156,20 @@ class InstanceResult(APIView):
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
+class InstanceRestore(APIView):
+    def post(self, request, format=None):
+        taker_serializer = TakerSerializer(data=request.data)
+        if not taker_serializer.is_valid():
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+        
+        current_instance = Instance.objects.filter(taker__email=taker_serializer.validated_data['email'], active=True).first()
+        if not current_instance:
+            return Response({"message": "user has not active assesment instances"}, status=status.HTTP_200_OK)
+
+        instance_serializer = InstanceSerializer(current_instance, context={'request': request})
+        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+
+
 class TakerList(generics.ListCreateAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer

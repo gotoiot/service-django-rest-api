@@ -24,6 +24,15 @@ class InstanceSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assesments:instance-detail', 'lookup_field': 'pk'},
         }
+    
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)
+        super(InstanceSerializer, self).__init__(*args, **kwargs)
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
 
 class TakerSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,7 +54,6 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
-    # assesment = serializers.ReadOnlyField(source='assesment.url')
 
     class Meta:
         model = Question
@@ -56,7 +64,6 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OptionSerializer(serializers.HyperlinkedModelSerializer):
-    # question = serializers.ReadOnlyField(source='question.url')
 
     class Meta:
         model = Option

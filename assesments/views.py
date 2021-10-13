@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from django.utils import timezone
+from rest_framework.exceptions import APIException
 
 from assesments.models import Assesment, Instance, Option, Question, Taker
 from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
@@ -60,14 +61,28 @@ class InstanceDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class InstanceCreate(APIView):
     def post(self, request, pk, format=None):
+        """ Create and assesment instance based in assesment ID.
+        If user data is invalid an is returned.
+        If user has an active instance an is returned.
+        If taker has an inactive instance for an assesment, the instance ID is returned
+        instead of creating a new one.
+        """
         assesment = get_object_or_404(Assesment, pk=pk)
         taker_serializer = TakerSerializer(data=request.data)
         if not taker_serializer.is_valid():
             return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
         taker = taker_serializer.save()
-        instance = Instance(taker=taker, assesment=assesment, start_date=timezone.now(), end_date=timezone.now())
-        instance.save()
-        instance_serializer = InstanceSerializer(instance, context={'request': request})
+
+        if taker.instance_set.filter(active=True).count() > 0:
+            return Response({"error": "taker has active(s) test instance(s)"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        if taker.instance_set.filter(active=False, assesment=assesment).count() > 0:
+            instance = taker.instance_set.filter(active=False, assesment=assesment).first()
+        else:
+            instance = Instance(taker=taker, assesment=assesment, start_date=timezone.now(), end_date=timezone.now())
+            instance.save()
+        
+        instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url'))
         return Response(instance_serializer.data, status=status.HTTP_201_CREATED)
 
 

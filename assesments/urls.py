@@ -16,6 +16,8 @@ urlpatterns = [
     path('instances/<uuid:pk>/start', views.InstanceStart.as_view(), name="instance-start"),
     path('instances/<uuid:pk>/questions/<int:q_id>', views.InstanceQuestionDetail.as_view(), name="instance-question-detail"),
     path('instances/<uuid:pk>/answer', views.InstanceAnswer.as_view(), name="instance-answer"),
+    path('instances/<uuid:pk>/end', views.InstanceEnd.as_view(), name="instance-end"),
+    path('instances/<uuid:pk>/result', views.InstanceResult.as_view(), name="instance-result"),
     path('takers/', views.TakerList.as_view(), name='taker-list'),
     path('takers/<int:pk>/', views.TakerDetail.as_view(), name="taker-detail"),
 ]

@@ -4,6 +4,7 @@ from datetime import date
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Assesment(models.Model):
@@ -60,24 +61,30 @@ class Instance(models.Model):
         """String for representing the Model object."""
         return f'{self.id} for "{self.assesment.title}"'
 
-    def calculate_score(self):
-        """ Calculates the score from answered questions against assesment questions """
-        pass
-
-    def start(self):
-        """ set start date, calculate end date from duration, set active flag """
-        pass
-
-    def stop(self):
-        """ set end date, set active flag as false"""
-        pass
-
-    def update_progress(self):
-        """ receive each question and updates progress_status """
-        pass
-
     class Meta:
         ordering = ['-id']
+
+    @property
+    def remaining_seconds(self):
+        if not self.active:
+            return 0
+        t = timezone.now() - self.end_date
+        return self.duration * 60 - t.seconds
+
+
+    def calculate_score(self):
+        question_count = self.assesment.question_count
+        question_value = 100 / question_count
+        score = 0
+        progress_status = self.progress_status
+        for question in self.assesment.question_set.all():
+            if str(question.id) in progress_status:
+                selected_option_id = progress_status[str(question.id)]
+                option = Option.objects.get(pk=selected_option_id)
+                if not option or not option.is_correct: 
+                    continue
+                score += question_value
+        return score
 
 
 class Taker(models.Model):

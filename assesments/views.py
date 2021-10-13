@@ -17,12 +17,6 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
                                     TakerSerializer)
 
 
-def _get_model_by_pk(model, pk):
-    try:
-        return model.objects.get(pk=pk)
-    except model.DoesNotExist:
-        raise Http404
-
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -140,7 +134,26 @@ class InstanceAnswer(APIView):
         
         instance.progress_status[question_id] = option_id
         instance.save()
-        return Response({"message": "success"}, status=status.HTTP_202_ACCEPTED)
+        return Response({"message": "success", "remaining_seconds": instance.remaining_seconds}, status=status.HTTP_200_OK)
+
+
+class InstanceEnd(APIView):
+    def post(self, request, pk, format=None):
+        instance = get_object_or_404(Instance, pk=pk)
+        if not instance.active:
+            return Response({"message": "only activated instances can be ended"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        instance.end_time = timezone.now()
+        instance.active = False
+        instance.score = instance.calculate_score()
+        instance.save()
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
+
+
+class InstanceResult(APIView):
+    def get(self, request, pk, format=None):
+        instance = get_object_or_404(Instance, pk=pk)
+        instance_serializer = InstanceSerializer(instance, context={'request': request})
+        return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
 class TakerList(generics.ListCreateAPIView):

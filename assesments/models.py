@@ -39,6 +39,10 @@ class Assesment(models.Model):
     class Meta:
         ordering = ['-id']
 
+    @property
+    def question_count(self):
+        return self.question_set.count()
+
 
 class Instance(models.Model):
     """Model representing a specific instance of an assesment """
@@ -147,7 +151,7 @@ class Question(models.Model):
         return self.title
     
     class Meta:
-        ordering = ['-id']
+        ordering = ['id']
 
 
 class Option(models.Model):
@@ -173,4 +177,4 @@ class Option(models.Model):
         return f"{self.title} for {self.question.title}"
     
     class Meta:
-        ordering = ['-id']
+        ordering = ['id']

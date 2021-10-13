@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import datetime
 
 from django.contrib.auth.models import User
 from django.http import Http404
@@ -74,7 +74,7 @@ class InstanceCreate(APIView):
         taker = taker_serializer.save()
 
         if taker.instance_set.filter(active=True).count() > 0:
-            return Response({"error": "taker has active(s) test instance(s)"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"message": "taker has active(s) test instance(s)"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         if taker.instance_set.filter(active=False, assesment=assesment).count() > 0:
             instance = taker.instance_set.filter(active=False, assesment=assesment).first()
@@ -90,19 +90,57 @@ class InstanceTest(APIView):
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         instance_serializer = InstanceSerializer(instance, context={'request': request})
-        return Response(instance_serializer.data, status=status.HTTP_200_SUCCESS)
+        return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
 class InstanceStart(APIView):
-    def get(self, request, pk, format=None):
+    def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        if instance.active:
+            return Response({"message": "instance was already activated"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         instance.start_time = timezone.now()
-        instance.end_time = timezone.now() + timedelta(minutes=instance.duration)
+        instance.end_time = instance.start_time + datetime.timedelta(minutes=instance.duration)
         instance.active = True
         instance.save()
-        first_question = instance.assesment.question_set.first()
-        # TODO this response must be a Serializer data
-        return Response({'uuid': instance.id, 'active': instance.active})
+        instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'duration', 'start_date', 'end_date'))
+        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+
+
+class InstanceQuestionDetail(APIView):
+    def get(self, request, pk, q_id, format=None):
+        instance = get_object_or_404(Instance, pk=pk)
+        if not instance.active:
+            return Response({"message": "not allowed access questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        questions = instance.assesment.question_set.all()
+        if q_id <= 0 or q_id > len(questions):
+            return Response({"message": "invalid question id"}, status=status.HTTP_400_BAD_REQUEST)
+        question = questions[q_id - 1]
+        question_serializer = QuestionSerializer(question, context={'request': request})
+        return Response(question_serializer.data, status=status.HTTP_200_OK)
+
+
+class InstanceAnswer(APIView):
+    def put(self, request, pk, format=None):
+        instance = get_object_or_404(Instance, pk=pk)
+        if not instance.active:
+            return Response({"message": "not allowed answer questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        question_id = request.data.get('question_id')
+        option_id = request.data.get('option_id')
+        if not isinstance(question_id, int) or not isinstance(option_id, int):
+            return Response({"message": "question_id and option_id must be integers"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        question = instance.assesment.question_set.filter(pk=question_id).first()
+        if not question:
+            return Response({"message": "question does not exists for the assesment"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        option = question.option_set.filter(pk=option_id).first()
+        if not option:
+            return Response({"message": "option does not exists for the question"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        instance.progress_status[question_id] = option_id
+        instance.save()
+        return Response({"message": "success"}, status=status.HTTP_202_ACCEPTED)
 
 
 class TakerList(generics.ListCreateAPIView):

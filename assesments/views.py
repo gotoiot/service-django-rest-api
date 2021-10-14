@@ -17,15 +17,14 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
                                     TakerSerializer)
 
 
-
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
         'assesments': reverse('assesments:assesment-list', request=request, format=format),
         'instances': reverse('assesments:instance-list', request=request, format=format),
         'takers': reverse('assesments:taker-list', request=request, format=format),
-        # 'questions': reverse('assesments:question-list', request=request, format=format),
-        # 'options': reverse('assesments:option-list', request=request, format=format),
+        'questions': reverse('assesments:question-list', request=request, format=format),
+        'options': reverse('assesments:option-list', request=request, format=format),
     })
 
 
@@ -39,6 +38,12 @@ class AssesmentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+class AssesmentStatus(APIView):
+    def get(self, request, pk, format=None):
+        _ = get_object_or_404(Assesment, pk=pk)
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
 
 
 class InstanceList(generics.ListCreateAPIView):

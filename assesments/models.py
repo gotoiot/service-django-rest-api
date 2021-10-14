@@ -37,12 +37,12 @@ class Assesment(models.Model):
         """String for representing the Model object."""
         return self.title
 
-    class Meta:
-        ordering = ['-id']
-
     @property
     def question_count(self):
         return self.question_set.count()
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Instance(models.Model):
@@ -61,16 +61,12 @@ class Instance(models.Model):
         """String for representing the Model object."""
         return f'{self.id} for "{self.assesment.title}"'
 
-    class Meta:
-        ordering = ['-id']
-
     @property
     def remaining_seconds(self):
         if not self.active:
             return 0
         t = timezone.now() - self.end_date
         return self.duration * 60 - t.seconds
-
 
     def calculate_score(self):
         question_count = self.assesment.question_count
@@ -85,6 +81,9 @@ class Instance(models.Model):
                     continue
                 score += question_value
         return score
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Taker(models.Model):
@@ -125,11 +124,6 @@ class Taker(models.Model):
         """String for representing the Model object."""
         return f'{self.last_name}, {self.first_name}'
 
-    @classmethod
-    def is_taker_available(self, taker):
-        """ Evaluate that taker has not opened instances """
-        return False
-    
     class Meta:
         ordering = ['-id']
 

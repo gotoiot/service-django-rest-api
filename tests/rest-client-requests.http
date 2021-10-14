@@ -40,3 +40,11 @@ Authorization: Basic {{user}}:{{pass}}
     "last_name": "Palote",
     "email": "jaunpalote@gmail.com"
 }
+
+
+###
+
+{
+    "question_id": 1,
+    "option_id": 1
+}

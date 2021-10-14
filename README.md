@@ -1,17 +1,29 @@
-<a href="https://www.gotoiot.com/">
-    <img src="doc/gotoiot-logo.png" alt="logo" title="Goto IoT" align="right" width="60" height="60" />
+<a href="https://www.correlation-one.com/">
+    <img src="doc/logo.png" alt="logo" title="Correlation One" align="right" width="60" height="60" />
 </a>
 
 Code API
 ========
 
-Este proyecto es una API para realizar challenges de codigo para puestos de trabajo en Data Science. Está inspirada en la [API de Correlation One](https://quiz.correlation-one.com/test/data-scientist).
+Este proyecto es una API para realizar challenges de codigo para puestos de trabajo en Data Science, inspirada en la [API de Correlation One](https://quiz.correlation-one.com/test/data-scientist).
 
-El proyecto está desarrollado en Python con Django REST Framework (DRF) que permite crear RESTful APIs escalables. Así mismo se ejecuta sobre un contenedor de Docker que permite correr el proyecto de igual manera en múltiples plataformas. Para la comunicación con la base de datos se utiliza PostgreSQL corriendo también sobre un contendor de Docker. Ambos servicios se ejecutan utilizando la herramienta Docker Compose, que permite ejecutar ambos servicios desde un mismo archivo, de manera centralizada y humanamente entendible.
+La API está desarrollada en Python con [Django REST Framework](https://www.django-rest-framework.org/) (DRF) que permite crear RESTful APIs de manera consistente y escalable. Así mismo se ejecuta sobre un contenedor de Docker que permite correr la aplicación de igual manera en múltiples entornos. La base de datos utilizada para guardar la información de los assesments, takers, y preguntas, es PostgreSQL, también corriendo sobre un contenedor de Docker. 
 
-En esta imagen se puede ver un diagrama de la arquitectura del proyecto.
+A continuación podés ver las características principales del proyecto:
 
-![architecture](doc/architecture.png)
+* Browsable API
+* Paginación
+* Representación de la información en diferentes formatos.
+* Exploración de la API mediante HyperLinks.
+* Cálculo de score autmático.
+* Recuperación de instancias de assesments desde otro navegador.
+* Obtención del tiempo restante de assesment en cada nueva question.
+* Prevención que un taker tenga más de un assesment activo.
+* Prevención de envío de questions y options incorrectas.
+* Prevención de re-comenzar una instancia activa o finalizada.
+* Prevención de obtención de questions de una instancia no activada.
+* Prevención de envío de respuestas en una instancia no activada.
+* Amplia documentación de uso.
 
 ## Comenzando 🚀
 
@@ -23,7 +35,7 @@ Esta sección es una guía con los pasos escenciales para que puedas poner en ma
 
 Para correr este proyecto es necesario que instales `Docker` y `Docker Compose`. 
 
-En [este artículo](https://www.gotoiot.com/pages/articles/docker_installation_linux/) están los detalles para instalar Docker y Docker Compose en una máquina Linux. En caso que quieras instalar las herramientas en otra plataforma o tengas algún incoveniente, podes leer la documentación oficial de [Docker](https://docs.docker.com/get-docker/) y también la de [Docker Compose](https://docs.docker.com/compose/install/).
+En [este artículo](https://www.gotoiot.com/pages/articles/docker_installation_linux/) (en español) están los detalles para instalar Docker y Docker Compose en una máquina Linux. En caso que quieras instalar las herramientas en otra plataforma o tengas algún incoveniente, podes leer la documentación oficial de [Docker](https://docs.docker.com/get-docker/) y también la de [Docker Compose](https://docs.docker.com/compose/install/).
 
 Continua con la descarga del código cuando tengas las dependencias instaladas y funcionando.
 
@@ -32,18 +44,29 @@ Continua con la descarga del código cuando tengas las dependencias instaladas y
 Para descargar el codigo, lo más conveniente es realizar un `fork` de este proyecto a tu cuenta personal haciendo click en [este link](https://github.com/agustinBassi/code-api/fork). Una vez que ya tengas el fork a tu cuenta, descargalo desde la terminal con este comando (acordate de poner tu usuario en el link):
 
 ```
-git clone https://github.com/USER/connection-mqtt.git
+git clone https://github.com/USER/code-api.git
 ```
 
 > En caso que no tengas una cuenta en Github, o no quieras realizar un fork, podés clonar directamente este repo con el comando `git clone https://github.com/agustinBassi/code-api.git` .
 
+### Configuración inicial del proyecto
+
+Para ejecutar la aplicación, primero es necesario descargar la imagen de la base de datos con el comando `docker-compose pull db`. A continuación, es necesario que compiles el servicio de la REST API con el comando `docker-compose build code-api` (puede demorar unos minutos). 
+
+Cuando los procesos anteriores finalicen, iniciá el servicio de base de datos con el comando `docker-compose up -d db` desde la raíz del proyecto. Con la base de datos corriendo, es necesario crear las tablas que necesita la aplicación para funcionar con los siguientes comandos:
+
+```
+docker-compose run code-api python manage.py makemigrations
+docker-compose run code-api python manage.py migrate
+```
+
+También será necesario que crees un `superuser` para crear los Assesments, Questions y Options dentro de la base. Podés asignar el nombre `admin` y cualquier contraseña. Ejecuta el comando `docker-compose run code-api python manage.py createsuperuser` y luego ingresa el usuario, mail y contraseña adecuados.
+
 ### Ejecutar la aplicación
 
-Para ejecutar la aplicación tenes que correr el comando `docker-compose up -d db` desde la raíz del proyecto. Este comando va a descargar la imagen de la base de datos y la va a poner a correr. Una vez ejecutado el comando anterior, es necesario que compiles el servicio de la REST API con el comando `docker-compose build code-api` (puede demorar unos minutos). 
+Con las configuraciones iniciales realizadas, es momento de ejecutar el servicio de la API con el comando `docker-compose up -d code-api` (si querés correr el servicio de manera interactiva, podes quitar el flag -d en la ejecución). Cuando el servicio inicie, podés acceder al `API Browser` desde el navegador ingresando la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. 
 
-Una vez que compile el servicio, podés ejecutarlo de manera interactiva en la terminal con el comando `docker-compose up code-api` (si querés correr el servicio en segundo plano, podés agregar el flag -d en la ejecución). Cuando el servicio inicie, podés acceder al `API Browser` desde el navegador ingresando la URL [http://localhost:8000/](http://localhost:8000/) en el navegador.
-
-Si pudiste acceder al `API browser` significa que la aplicación se encuentra corriendo bien.
+Si pudiste acceder al `API browser` significa que la aplicación se encuentra corriendo correctamente.
 
 </details>
 
@@ -55,6 +78,94 @@ En esta sección vas a encontrar la información para entender y configurar el p
 
 <details><summary><b>Mira los detalles</b></summary>
 
+### Estructura de directorios
+
+```sh
+├── assesments (important files)    # main assesments app dir
+│   ├── migrations                  # dir to track DB modifications
+│   ├── admin.py                    # register assesments model into admin interface
+│   ├── models.py                   # assesments models declaration
+│   ├── serializers.py              # classes for serialize/deserialize models instances
+│   ├── urls.py                     # configuration of app routes
+│   └── views.py                    # bussiness logic function and classes
+├── codeapi                         # main Django project
+│   ├── asgi.py                     # utility to load Django app into ASGI servers
+│   ├── settings.py                 # main Django project settings
+│   ├── urls.py                     # main Django project URLs configuration
+│   └── wsgi.py                     # utility to load Django app into WSGI servers
+├── data                            # database files (managed by PostgreSQL)
+├── doc                             # dir to save documentation
+│   └── ...
+├── snippets                        # snippet application dir
+│   └── ...
+├── Contribuitors.md                # project contribuitors
+├── Dockerfile                      # Dockerfile for Django project
+├── LICENSE                         # licencia del proyecto
+├── README.md                       # este archivo
+├── docker-compose.yml              # configuración de los contenedores de Docker centralizada
+├── env                             # variables de entorno utilizadas en el proyecto
+├── manage.py                       # archivo con utilidades nativas de Django
+└── requirements.txt                # dependencias de Python del proyecto
+```
+
+### Configuración de Django
+
+En el archivo `codeapi/settings.py` se encuentra la configuración general de la API. Dentro de este archivo se pueden realizar todo tipo de configuraciones de Django en la que se destacan las siguientes:
+
+* Selección y configuración del motor de base de datos.
+* Aplicaciones instaladas dentro del proyecto.
+* Configuración de zona horaria.
+* Configuración de debug del proyect.
+* Configuración específica de Django REST Framework.
+* Configuración de templates.
+* Configuración de directorio para archivos estáticos.
+
+Para mayor información sobre toda la posibilidad de configuraciones, podés acceder a la documentación oficial en [este link](https://docs.djangoproject.com/en/3.2/topics/settings/).
+
+### Browsable API
+
+Django REST Framework tiene una funcionalidad nativa que permite hacer navegable la REST API. Esta característica es realmente una funcionalidad excelente, ya que habilita a explorar, navegar y descubrir la API sin tener que abrir ningún programa dedicado (como Postman u otros clientes).
+
+Desde la Browsable API es posible realizar operaciones CRUD sobre cada uno de los modelos del sistema.
+
+### Cómo usar la API
+
+El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. Si aún no iniciaste sesión, la API te redirigirá a la página de autenticación, donde podrás ingresar tu usuario admin y contraseña. Luego podrás tener acceso a la API. 
+
+La aplicación viene sin datos cargados sobre `Assesments`, `Takers`, `Questions`, `Options` ni `Instances`, pero al navegar podrás copiar & pegar fácilmente los snippets JSON para crear las entidades.
+
+El primer paso es crear al menos un `Assesment` ingresando en [http://localhost:8000/assesments/assesments](http://localhost:8000/assesments/assesments). Carga los datos necesarios y presiona el botón `Create`.
+
+Luego crea al menos dos `Questions` desde la URL [http://localhost:8000/assesments/questions](http://localhost:8000/assesments/questions). A continuación crea al menos cuatro `Options` y asocia dos a cada `Question`.
+
+Con esta información escrita en la base de datos, es momento de realizar un `Assesment`. Comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/assesments/assesments/1/create](http://localhost:8000/assesments/assesments/1/create) con un POST, ingresando los campos first_name, last_name, email, como JSON en el body del request. 
+
+La respuesta del endpoint devuelve el id de la instancia creada. Con ese id podés acceder a los siguientes endpoints:
+
+* `instances/<uuid:pk>/`: para obtener los detalles de la instancia.
+* `instances/<uuid:pk>/test`: para chequear que la instancia esté disponible para realizarse.
+* `instances/<uuid:pk>/start`: para iniciar una instancia, setear el start_time, el end_time y el flag active.
+* `instances/<uuid:pk>/questions/<int:q_id>`: en el endpoint para obtener los detalles de la instancia, en el campo `assesment->question_count` se puede obtener la cantidad de preguntas del assesment. Luego, podés acceder a cada una de ellas, desde 1 hasta question_count. Cualquier valor fuera de estos valores devolverá un código 405 Not Allowed.
+* `instances/<uuid:pk>/answer`: para enviar la respuesta sobre un assesment. Recibe un question_id y option_id en el body del request. 
+* `instances/<uuid:pk>/end`, para finalizar una instancia, setear el end_time, poner el flag active en False y calcular el score automáticamente.
+* `instances/<uuid:pk>/result`: para obtener el resultado de una instancia en particular.
+* `instances/restore`: para recuperar una instancia (en caso que haya una activa) de un taker en particular.
+
+### Variables de entorno
+
+En el archivo `env` están definidas algunas variables de entorno que utiliza el servicio de base de datos, como así también el servicio de la API. Se pueden agregar/quitar las variables necesarias. En caso de borrar accidentalmente los valores o el archivo env, a continuación podés encontrar unos valores que funcionan correctamente con la aplicación.
+
+```
+DJANGO_SECRET_KEY=sup3rs3cr3tk3y
+DJANGO_DEBUG=True
+DATABASE_NAME=postgres
+DATABASE_USER=postgres
+DATABASE_PASS=postgres
+DATABASE_HOST=db
+DATABASE_PORT=5432
+```
+
+Es **ALTAMENTE RECOMENDABLE** que cambies estas variables si querés utilizar esta aplicación con fines productivos.
 
 </details>
 
@@ -64,25 +175,76 @@ En esta sección vas a encontrar información que te va a servir para tener un m
 
 <details><summary><b>Lee esta info</b></summary>
 
-### Permissions
+### ERD (Entity-Relation Desing)
 
-Cuando se ejecutan los comandos desde dentro del contenedor de docker, se ejecutan con el usuario root. Esto impide luego editar la estructura de directorios adecuadamente. Una vez que se crean el proyecto y/o las aplicaciones de Django, es conveniente ejecutar el comando `sudo chown -R $USER:$USER .` para dar permisos al usuario:grupo sobre todo el proyecto.
+Para el diseño de las entidades y sus relaciones, se utilizó la herramienta online [EDR Plus](https://erdplus.com/standalone), que permite crear entidades, atributos y relaciones de manera muy sencilla. En la siguiente figura podes ver el diagrama de entidad-relacion del sistema.
 
-Así mismo, y debido a que la carpeta de `data` que contiene la base de datos es necesario que el owner sea root, luego de la operación anterior, ejecutar el comando `sudo chown -R root:root data/` que dejará los permisos adecuadamente seteados en todo el proyecto.
+![architecture](doc/entity-relation-diagram.png)
 
-> En caso de crearse nuevos proyectos/aplicaciones desde dentro de los contenedores de Docker, repetir las operaciones.
+Un `Assesment` se define una única vez, y además de sus atributos, tiene asociado una o varias `Questions`. A su vez, cada `Questions` tiene asociada una o más `Options`.
 
-### Commands execution
+Para poder realizar un `Assesment` es necesario que un `Taker` se registre con sus datos, y que cree una `Instance` de un `Assesment`. Cada `Instance` tiene, además de sus atributos, un UUID como identificador. Esto permite que, desde otro navegador se pueda recuperar la instancia en función de los datos del Taker. 
 
-Por la misma razon que los permisos, es conveniente ejecutar los comandos con el usuario `gotoiot` creado dentro del contendor. Para ello, cada vez que se tenga que ejecutar un comando dentro del contenedor, poner este prefijo `docker-compose run code-api su gotoiot -c 'python manage.py COMMAND'`.
+### Endpoints
 
-### Sobre Django
+A continuación se lista cada uno de los endpoints, con su descripción y métodos disponibles.
 
-En estos slides hay una buena y simple info sobre lo que puede hacer Django REST Framework. Sobre todo agrega la parte de filtrado, ordering, y busqueda que estan muy buenas.
+* `assesments/` - Muestra una lista con todos los recursos disponibles de la aplicación (GET)
+* `assesments/assesments` - Muestra una lista con todos los assesments disponibles (GET & POST)
+* `assesments/assesments/<id>` - Muestra la HOME de un test específico (GET, PUT, DELETE)
+* `assesments/assesments/<id>/status` - Chequea el estado de un assesment y devuelve su status (GET)
+* `assesments/assesments/<id>/create` - Crea una nueva instancia de un assesment y devuelve el UUID de la instancia (POST)
+* `assesments/instances` - Muestra una lista con todas las instancias disponibles (GET & POST)
+* `assesments/instances/<id>` - Muestra el detalle de la instancia (GET, PUT, DELETE)
+* `assesments/instances/<id>/test` - Chequea que la instancia este activa (GET)
+* `assesments/instances/<id>/start` - Inicia el test y empieza el countdown (POST)
+* `assesments/instances/<id>/questions/<id>` - Muestra el detalle con la pregunta de una instancia (GET)
+* `assesments/instances/<id>/answer` - Envía el resultado de una respuesta (POST)
+* `assesments/instances/<id>/end` - Finaliza una instancia (POST)
+* `assesments/instances/<id>/result` - Muestra el resultado de una instancia (GET)
+* `assesments/instances/restore` - Permite recuperar una instancia en función de los datos de un usuario (POST)
+* `assesments/takers` - Muestra una lista con todos los tests takers que realizaron assesments (GET & POST)
+* `assesments/takers/<id>` - Muestra el detalle de un taker específico (GET, PUT, DELETE)
+* `assesments/questions` - Muestra una lista con todos las questions disponibles (GET & POST)
+* `assesments/questions/<id>` - Muestra el detalle de una question específico (GET, PUT, DELETE)
+* `assesments/options` - Muestra una lista con todos las options disponibles (GET & POST)
+* `assesments/options/<id>` - Muestra el detalle de una option específico (GET, PUT, DELETE)
 
-### Ejecución de servicios
+Si bien en la lista anterior se encuentra la información de cada endpoint, es mucho mejor navegar mediante la `Browsable API` que permite acceder a mayor información sobre cada uno de los endpoints.
 
-Los servicios de la aplicación se ejecutan sobre contenedores de Docker, así se pueden desplegar de igual manera en diferentes plataformas. Los detalles sobre cómo funcionan los servicios los podés ver directamente en el archivo **docker-compose.yml** y complementar la información con el README de cada parte de la app.
+### Correlation-One Requests/Responses
+
+Para entender de mejor manera la funcionalidad de la API de Correlation One, podés realizar el flujo de un assesment ingresando en [este link](https://quiz.correlation-one.com/test/data-scientist). Así mismo, revisando el tráfico de red desde la ventana de development del navegador, analizando y entendiendo la información enviada y recibida en cada request, podrás tener un mejor contexto sobre la funcionalidad necesaria.
+
+Para facilitar el acceso a la información de los endpoints, podés acceder al archivo `doc/api-requests-responses.md`, donde se encuentran guardados los requests/responses realizados contra la API de Correlation One.
+
+Gran parte de la funcionalidad está inspirada en los mensajes de la API, aunque con algunas diferencias.
+
+</details>
+
+
+## TODOs 📝
+
+En esta sección podés ver las funcionalidades pendientes del proyecto y una posible forma de implementarlas.
+
+<details><summary><b>Mira la lista completa de pendientes</b></summary><br>
+
+* Armar los requests con Postman
+* No permitir que un taker tome mas de un test al mismo tiempo
+* Compress responses
+* Security
+* Recuperar la sesion
+* Disparar el proceso de finalizacion automaticamente con un timer
+* Manejo de sesiones
+* Soportar otros formatos mas que texto
+* Autofinalizar el test o no permitir seguir recibiendo respuestas una vez finalizado el tiempo.
+* Autenticacion y autorizacion de usuarios.
+* Buildear el codigo dentro de la image.
+* Sacar el flag de debug.
+* Agregar previous y next como URLs.
+* Agregar testing con Postman.
+* Versionar la API.
+* Testing automatizado.
 
 </details>
 
@@ -94,15 +256,17 @@ En esta sección podés ver las tecnologías más importantes utilizadas.
 
 * [Docker](https://www.docker.com/) - Ecosistema que permite la ejecución de contenedores de software.
 * [Docker Compose](https://docs.docker.com/compose/) - Herramienta que permite administrar múltiples contenedores de Docker.
-* COMPLETAR PYTHON
-* COMPLETAR DJANGO
-* COMPLETAR DJANGO REST FRAMEWORK
+* [Python](https://www.python.org/) - Lenguaje en el que están realizados los servicios.
+* [Django](https://www.djangoproject.com/) - Popular framework en Python para desarrollo de aplicaciones web.
+* [Django REST Framework](https://www.django-rest-framework.org/) - Framwork basado en Django para el diseño de REST APIs.
+* [PostgreSQL](https://www.postgresql.org/) - Base de datos para consultar y almacenar datos.
+* [Visual Studio Code](https://code.visualstudio.com/) - Popular IDE de desarrollo para múltiples plataformas.
 
 </details>
 
 ## Contribuir 🖇️
 
-Si estás interesado en el proyecto y te gustaría sumar fuerzas para que siga creciendo y mejorando, podés abrir un hilo de discusión para charlar tus propuestas en [este link](https://github.com/gotoiot/connection-mqtt/issues/new). Así mismo podés leer el archivo [Contribuir.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) donde están bien explicados los pasos para que puedas enviar pull requests.
+Si estás interesado en el proyecto y te gustaría sumar fuerzas para que siga creciendo y mejorando, podés abrir un hilo de discusión para charlar tus propuestas en [este link](https://github.com/agustinBassi/code-api/issues/new). Así mismo podés leer el archivo [Contribuir.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) donde están bien explicados los pasos para que puedas enviar pull requests.
 
 ## Muestas de agradecimiento 🎁
 
@@ -117,13 +281,8 @@ Las colaboraciones principales fueron realizadas por:
 
 * **[Agustin Bassi](https://github.com/agustinBassi)**: Ideación, puesta en marcha y mantenimiento del proyecto.
 
-También podés mirar todas las personas que han participado en la [lista completa de contribuyentes](https://github.com/connection-mqtt/contributors).
+También podés mirar todas las personas que han participado en la [lista completa de contribuyentes](https://github.com/agustinBassi/code-api/contributors).
 
 ## Licencia 📄
 
 Este proyecto está bajo Licencia ([MIT](https://choosealicense.com/licenses/mit/)). Podés ver el archivo [LICENSE.md](LICENSE.md) para más detalles sobre el uso de este material.
-
-# TODOs
-
-* Armar los requests con Postman
-* Not permitir que un taker tome mas de un test al mismo tiempo

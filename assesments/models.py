@@ -54,6 +54,7 @@ class Instance(models.Model):
     end_date = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=False)
     finalized = models.BooleanField(default=False)
+    question_index = models.IntegerField(default=0)
     progress_status = models.JSONField(null=True, blank=True)
     assesment = models.ForeignKey('Assesment', on_delete=models.CASCADE, default='')
     taker = models.ForeignKey('Taker', on_delete=models.RESTRICT, default='')
@@ -66,8 +67,8 @@ class Instance(models.Model):
     def remaining_seconds(self):
         if not self.active or self.finalized:
             return 0
-        t = timezone.now() - self.end_date
-        return self.duration * 60 - t.seconds
+        remaining_time = self.end_date - timezone.now()
+        return remaining_time.seconds
 
     def calculate_score(self):
         questions = self.assesment.question_set.all()
@@ -85,6 +86,16 @@ class Instance(models.Model):
                     continue
                 score += question_value
         return score
+
+    def get_next_question_index(self):
+        if self.question_index >= self.assesment.question_count:
+            return self.question_index
+        return self.question_index + 1
+
+    def get_prev_question_index(self):
+        if self.question_index <= 1:
+            return 1
+        return self.question_index - 1
 
     class Meta:
         ordering = ['-id']

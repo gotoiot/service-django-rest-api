@@ -111,7 +111,11 @@ class InstanceCreate(APIView):
             instance.save()
         
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url'))
-        return Response(instance_serializer.data, status=status.HTTP_201_CREATED)
+        response_data = {
+            "next": reverse('assesments:instance-test', args=[instance.id], request=request, format=format),
+        }
+        response_data.update(instance_serializer.data)
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class InstanceTest(APIView):
@@ -121,7 +125,11 @@ class InstanceTest(APIView):
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'finalized'))
-        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "next": reverse('assesments:instance-start', args=[instance.id], request=request, format=format),
+        }
+        response_data.update(instance_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceStart(APIView):
@@ -135,12 +143,16 @@ class InstanceStart(APIView):
             return Response({"message": "instance was already activated"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.finalized:
             return Response({"message": "not possible to start a finished instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        instance.start_time = timezone.now()
-        instance.end_time = instance.start_time + datetime.timedelta(minutes=instance.duration)
+        instance.start_date = timezone.now()
+        instance.end_date = instance.start_date + datetime.timedelta(minutes=instance.duration)
         instance.active = True
         instance.save()
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'duration', 'start_date', 'end_date'))
-        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "next": reverse('assesments:instance-question-detail', args=[instance.id, instance.get_next_question_index()], request=request, format=format),
+        }
+        response_data.update(instance_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceQuestionDetail(APIView):
@@ -159,9 +171,15 @@ class InstanceQuestionDetail(APIView):
         questions = instance.assesment.question_set.all()
         if q_id <= 0 or q_id > len(questions):
             return Response({"message": "invalid question id"}, status=status.HTTP_400_BAD_REQUEST)
+        instance.question_index = q_id
+        instance.save()
         question = questions[q_id - 1]
         question_serializer = QuestionSerializer(question, context={'request': request})
-        return Response(question_serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "next": reverse('assesments:instance-answer', args=[instance.id], request=request, format=format),
+        }
+        response_data.update(question_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceAnswer(APIView):
@@ -212,7 +230,18 @@ class InstanceAnswer(APIView):
             instance.progress_status = dict()
         instance.progress_status[question_id] = option_id
         instance.save()
-        return Response({"message": "success", "remaining_seconds": instance.remaining_seconds}, status=status.HTTP_200_OK)
+
+        if instance.question_index >= instance.assesment.question_count:
+            next_value = reverse('assesments:instance-end', args=[instance.id], request=request, format=format)
+        else:
+            next_value = reverse('assesments:instance-question-detail', args=[instance.id, instance.get_next_question_index()], request=request, format=format)
+        response_data = {
+            "message": "success", 
+            "remaining_seconds": instance.remaining_seconds,
+            "next": next_value,
+            "prev": reverse('assesments:instance-question-detail', args=[instance.id, instance.get_prev_question_index()], request=request, format=format),
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceEnd(APIView):
@@ -231,7 +260,12 @@ class InstanceEnd(APIView):
         instance.finalized = True
         instance.score = instance.calculate_score()
         instance.save()
-        return Response({"message": "success", "result": reverse('assesments:instance-result', args=[pk], request=request, format=format)}, status=status.HTTP_200_OK)
+
+        response_data = {
+            "message": "success", 
+            "next": reverse('assesments:instance-result', args=[pk], request=request, format=format)
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceResult(APIView):
@@ -245,7 +279,11 @@ class InstanceResult(APIView):
         if instance.active:
             return Response({"message": "not possible to show result for an active instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('score', 'assesment', 'taker'))
-        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "next": reverse('assesments:instance-list', request=request, format=format),
+        }
+        response_data.update(instance_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class InstanceRestore(APIView):
@@ -275,7 +313,11 @@ class InstanceRestore(APIView):
             return Response({"message": "user has not active assesment instances"}, status=status.HTTP_200_OK)
 
         instance_serializer = InstanceSerializer(current_instance, context={'request': request}, fields=('url', 'duration', 'end_date', 'assesment', 'taker', 'remaining_seconds'))
-        return Response(instance_serializer.data, status=status.HTTP_200_OK)
+        response_data = {
+            "next": reverse('assesments:instance-question-detail', args=[current_instance.id, current_instance.get_next_question_index()], request=request, format=format)
+        }
+        response_data.update(instance_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class TakerList(generics.ListAPIView):

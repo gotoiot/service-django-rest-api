@@ -9,33 +9,10 @@ Este proyecto es una API para realizar challenges de codigo para puestos de trab
 
 La API está desarrollada en Python con [Django REST Framework](https://www.django-rest-framework.org/) (DRF) que permite crear RESTful APIs de manera consistente y escalable. Así mismo se ejecuta sobre un contenedor de Docker que permite correr la aplicación de igual manera en múltiples entornos. La base de datos utilizada para guardar la información de los assesments, takers, y preguntas, es PostgreSQL, también corriendo sobre un contenedor de Docker. 
 
-Django REST Framework viene con una funcionalidad llamada "Browsable API", que permite explorar toda la API desde un navegador web, y en esta imagen podés ver la vista principal de la API de assesments.
+La API tiene una funcionalidad integrada llamada "Browsable API", que te permite explorar toda la API desde un navegador web, y en esta imagen podés ver la vista principal de la API de assesments.
 
 ![screenshot-browsable-api](doc/screenshot-browsable-api.png)
 
-Así mismo, el framework Django provee un panel de administración que permite realizar operaciones CRUD sobre cada uno de los modelos (tablas) de la aplicación. En esta imagen podés ver cómo se ve el panel de aministración.
-
-![screenshot-admin-panel](doc/screenshot-admin-panel.png)
-
-A continuación podés ver las características principales del proyecto:
-
-* **RESTful API totalmente explorable mediante la "Browsable API"**
-* **Exploración de la API mediante HyperLinks**
-* **Navegación asistida para todos los flujos de la aplicación**
-* **Recuperación de instancias de assesments**
-* **Panel de administración de la aplicación**
-* **Documentación de uso de cada endpoint en la "Browsable API"**
-* **Paginación en todos los endpoints**
-* **Representación de la información en diferentes formatos**
-* **Cálculo de score autmático**
-* **Obtención del tiempo restante de assesment en cada nueva question**
-* **Personalización de API**
-* **Prevención que un taker tenga más de un assesment activo**
-* **Prevención de envío de questions y options incorrectas**
-* **Prevención de re-comenzar una instancia activa o finalizada**
-* **Prevención de obtención de questions de una instancia no activada**
-* **Prevención de envío de respuestas en una instancia no activada**
-* **Amplia documentación de uso**
 
 ## Comenzando 🚀
 
@@ -93,6 +70,29 @@ En esta sección vas a encontrar la información para entender y configurar el p
 
 <details><summary><b>Mira los detalles</b></summary>
 
+### Características principales
+
+A continuación podés ver las características principales del proyecto:
+
+* RESTful API totalmente explorable mediante la "Browsable API"
+* Exploración de la API mediante HyperLinks
+* Navegación asistida para todos los flujos de la aplicación
+* Recuperación de instancias de assesments
+* Panel de administración de la aplicación
+* Documentación de uso de cada endpoint en la "Browsable API"
+* Paginación en todos los endpoints
+* Representación de la información en diferentes formatos
+* Cálculo de score autmático
+* Obtención del tiempo restante de assesment en cada nueva question
+* Personalización de API
+* Prevención que un taker tenga más de un assesment activo
+* Prevención de envío de questions y options incorrectas
+* Prevención de re-comenzar una instancia activa o finalizada
+* Prevención de obtención de questions de una instancia no activada
+* Prevención de envío de respuestas en una instancia no activada
+* Amplia documentación de uso
+* Versionado de la API de assesments
+
 ### Configuración de Django
 
 En el archivo `codeapi/settings.py` se encuentra la configuración general de la API. Dentro de este archivo se pueden realizar todo tipo de configuraciones de Django en la que se destacan las siguientes:
@@ -131,6 +131,10 @@ La respuesta del endpoint devuelve el id y la URL de la instancia creada. Con es
 * `instances/restore`: para recuperar una instancia (en caso que haya una activa) de un taker en particular.
 
 ### Crear Assesment, Questions, Options y sus asociaciones
+
+El servicio de la API tiene integrado un panel de administración que te permite realizar operaciones CRUD sobre cada uno de los modelos (tablas) de la aplicación. En esta imagen podés ver cómo se ve el panel de aministración.
+
+![screenshot-admin-panel](doc/screenshot-admin-panel.png)
 
 Para crear distintos assesments, asignarle questions y options, es necesario ingresar al panel de administrador de la aplicación. Si ejecutaste el comando `python manage.py loaddata .fixtures/db.json` detallado el apartado de configuración inicial, se crea automáticamente un superusuario con el nombre `admin` y pass `admin` (podes cambiar la contraseña para tener una mayor seguridad).
 
@@ -282,25 +286,12 @@ En esta sección podés ver las funcionalidades pendientes del proyecto y una po
 
 <details><summary><b>Mira la lista completa de pendientes</b></summary><br>
 
-* Armar los requests con Postman
-* No permitir que un taker tome mas de un test al mismo tiempo
-* Compress responses
-* Security
-* Recuperar la sesion
-* Disparar el proceso de finalizacion automaticamente con un timer
-* Manejo de sesiones
-* Soportar otros formatos mas que texto
-* Autofinalizar el test o no permitir seguir recibiendo respuestas una vez finalizado el tiempo.
-* Autenticacion y autorizacion de usuarios.
-* Buildear el codigo dentro de la image.
-* Sacar el flag de debug.
-* Agregar previous y next como URLs.
-* Agregar testing con Postman.
-* Versionar la API.
-* Testing automatizado.
-* Correr la base de datos como un volumen.
-* Ejecutar la aplicación con un servidor web productivo.
-* Comprimir la respuesta
+* **Armar los requests con Postman**: Si bien el challenge requiere armar los requests con Postman, resulta más valioso utilizar la Browsable API y la navegación automatizada de sus flujos que utilizar Postman.
+* **Ejecutar la aplicación con un servidor web productivo.**: Para el desarrollo y demostración de la aplicación se utiliza el servidor web de desarrollo de Django. Si se quisiera implementar un servidor productivo, en [este link](https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/uwsgi/), por ejemplo, hay información para configurar uWSGI.
+* **Comprimir responses**: Si se utilizara un servidor web productivo, se podría realizar la compresión de las respuestas. En [este link](https://rtcamp.com/tutorials/nginx/enable-gzip/) hay un tutorial para habilitar Gzip en un servidor Nginx.
+* **Autenticación de usuarios**: Actualmente la API permite que cualquier usuario pueda ver los endpoints de la aplicación, y crear nuevas instancias. Se podría realizar autenticación de usuarios utilizando JWT o bien OAuth.
+* **Soportar otros formatos mas que texto**: Si bien el challenge requería que se puedan manejar más de un formato para las questions y options, en esta API solo tienen un formato (Textfield). En ese campo de texto se puede guardar tanto texto plano como HTML. Si se quisiera guardar una imagen, se podría alojar en un bucket de S3 y en el campo sólo guardar la URL.
+* **Testing automatizado.**: Si bien tener testing automatizado es una característica totalmente necesaria, para este proyecto no se implementó. Aunque implementar unit testing no resulta demasiado complejo. Si se quisiera implementar, en [este link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) se encuentra toda la información necesaria.
 
 </details>
 

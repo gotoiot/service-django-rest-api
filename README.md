@@ -5,237 +5,233 @@
 Code API
 ========
 
-Este proyecto es una API para realizar challenges de codigo para puestos de trabajo en Data Science, inspirada en la [API de Correlation One](https://quiz.correlation-one.com/test/data-scientist).
+This project is an API to perform code challenges for Data Science jobs, inspired by the [Correlation One API](https://quiz.correlation-one.com/test/data-scientist).
 
-La API está desarrollada en Python con [Django REST Framework](https://www.django-rest-framework.org/) (DRF) que permite crear RESTful APIs de manera consistente y escalable. Así mismo se ejecuta sobre un contenedor de Docker que permite correr la aplicación de igual manera en múltiples entornos. La base de datos utilizada para guardar la información de los assesments, takers, y preguntas, es PostgreSQL, también corriendo sobre un contenedor de Docker. 
+The API is developed in Python with [Django REST Framework](https://www.django-rest-framework.org/) (DRF) that allows creating RESTful APIs in a consistent and scalable way. Likewise, it runs on a Docker container that allows the application to run in the same way in multiple environments. The database used to store the information of the assesments, takers, and questions, is PostgreSQL, also running on a Docker container.
 
-La API tiene una funcionalidad integrada llamada "Browsable API", que te permite explorar toda la API desde un navegador web, y en esta imagen podés ver la vista principal de la API de assesments.
+The API has a built-in functionality called "Browsable API", which allows you to explore the entire API from a web browser, and in this image you can see the main view of the assessment API.
 
 ![screenshot-browsable-api](doc/screenshot-browsable-api.png)
 
+## Getting started 🚀
 
-## Comenzando 🚀
+This section is a guide with the essential steps so that you can start the application.
 
-Esta sección es una guía con los pasos escenciales para que puedas poner en marcha la aplicación.
+<details><summary><b>See the necessary steps</b></summary><br>
 
-<details><summary><b>Mira los pasos necesarios</b></summary><br>
+### Install dependencies
 
-### Instalar las dependencias
+To run this project you need to install `Docker` and` Docker Compose`.
 
-Para correr este proyecto es necesario que instales `Docker` y `Docker Compose`. 
+In [this article](https://support.netfoundry.io/hc/en-us/articles/360057865692-Installing-Docker-and-docker-compose-for-Ubuntu-20-04) are the details to install Docker and Docker Compose on a Linux machine. In case you want to install the tools on another platform or have any problems, you can read the official documentation of [Docker](https://docs.docker.com/get-docker/) and also that of [Docker Compose](https://docs.docker.com/compose/install/).
 
-En [este artículo](https://www.gotoiot.com/pages/articles/docker_installation_linux/) (en español) están los detalles para instalar Docker y Docker Compose en una máquina Linux. En caso que quieras instalar las herramientas en otra plataforma o tengas algún incoveniente, podes leer la documentación oficial de [Docker](https://docs.docker.com/get-docker/) y también la de [Docker Compose](https://docs.docker.com/compose/install/).
+Continue with downloading the code when you have the dependencies installed and working.
 
-Continua con la descarga del código cuando tengas las dependencias instaladas y funcionando.
+### Download the code
 
-### Descargar el código
-
-Para descargar el codigo, lo más conveniente es realizar un `fork` de este proyecto a tu cuenta personal haciendo click en [este link](https://github.com/agustinBassi/code-api/fork). Una vez que ya tengas el fork a tu cuenta, descargalo desde la terminal con este comando (acordate de poner tu usuario en el link):
+To download the code, the best thing to do is to `fork` this project to your personal account by clicking on [this link](https://github.com/agustinBassi/code-api/fork). Once you have the fork to your account, download it from the terminal with this command (remember to put your username in the link):
 
 ```
 git clone https://github.com/USER/code-api.git
 ```
 
-> En caso que no tengas una cuenta en Github, o no quieras realizar un fork, podés clonar directamente este repo con el comando `git clone https://github.com/agustinBassi/code-api.git` .
+> In case you don't have a Github account, or you don't want to fork, you can directly clone this repo with the command `git clone https://github.com/agustinBassi/code-api.git`.
 
-### Configuración inicial del proyecto
+### Initial project configuration
 
-Para ejecutar la aplicación, primero es necesario descargar la imagen de la base de datos con el comando `docker-compose pull db`. A continuación, es necesario que compiles el servicio de la REST API con el comando `docker-compose build code-api` (puede demorar unos minutos). 
+To run the application, you first need to download the database image with the `docker-compose pull db` command. Next, you need to compile the REST API service with the `docker-compose build code-api` command (it may take a few minutes).
 
-Cuando los procesos anteriores finalicen, iniciá el servicio de base de datos con el comando `docker-compose up -d db` desde la raíz del proyecto. Con la base de datos corriendo, es necesario crear las tablas que necesita la aplicación para funcionar con los siguientes comandos:
+When the above processes finish, start the database service with the command `docker-compose up -d db` from the root of the project. With the database running, it is necessary to create the tables that the application needs to work with the command `docker-compose run code-api python manage.py migrate`.
 
-```
-docker-compose run code-api python manage.py migrate
-```
-
-En este proyecto hay incluídos unos datos de ejemplo para que puedas poner a funcionar la aplicación con información precargada. Es recomendable que importes estos datos para probar la aplicación de manera rápida sin que tengas que cargar los datos de prueba manualmente. Para cargar los datos pre-cargados, ejecuta el siguiente comando:
+In this project some sample data is included so that you can put the application to work with preloaded information. It is recommended that you import this data to test the application quickly without having to load the test data manually. To load the pre-loaded data, run the following command:
 
 ```
 docker-compose run code-api python manage.py loaddata .fixtures/db.json
 ```
 
-### Ejecutar la aplicación
+### Run the application
 
-Con las configuraciones iniciales realizadas, es momento de ejecutar el servicio de la API con el comando `docker-compose up -d code-api` (si querés correr el servicio de manera interactiva, podes quitar el flag -d en la ejecución). Cuando el servicio inicie, podés acceder al `API Browser` desde el navegador ingresando la URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) en el navegador. 
+With the initial configurations done, it is time to run the API service with the command `docker-compose up -d code-api` (if you want to run the service interactively, you can remove the -d flag during execution). When the service starts, you can access the `Browsable API` from the browser by entering the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser.
 
-Si pudiste acceder al `API browser` significa que la aplicación se encuentra corriendo correctamente.
+If you were able to access the `Browsable API` it means that the application is running correctly.
 
 </details>
 
-Continuá explorando el proyecto una vez que lo tengas funcionando.
+Keep exploring the project once you have it up and running.
 
-## Información principal 🔍
+## Main information 🔍
 
-En esta sección vas a encontrar la información para entender y configurar el proyecto.
+In this section you will find the information to understand and configure the project.
 
-<details><summary><b>Mira los detalles</b></summary>
+<details><summary><b>See the details</b></summary>
 
-### Características principales
+### Main features
 
-A continuación podés ver las características principales del proyecto:
+Below you can see the main characteristics of the project:
 
-* RESTful API totalmente explorable mediante la "Browsable API"
-* Exploración de la API mediante HyperLinks
-* Navegación asistida para todos los flujos de la aplicación
-* Recuperación de instancias de assesments
-* Panel de administración de la aplicación
-* Documentación de uso de cada endpoint en la "Browsable API"
-* Paginación en todos los endpoints
-* Representación de la información en diferentes formatos
-* Cálculo de score autmático
-* Obtención del tiempo restante de assesment en cada nueva question
-* Personalización de API
-* Prevención que un taker tenga más de un assesment activo
-* Prevención de envío de questions y options incorrectas
-* Prevención de re-comenzar una instancia activa o finalizada
-* Prevención de obtención de questions de una instancia no activada
-* Prevención de envío de respuestas en una instancia no activada
-* Amplia documentación de uso
-* Versionado de la API de assesments
+* RESTful API fully explorable through the "Browsable API"
+* API exploration using HyperLinks
+* Assisted navigation for all application flows
+* Assessment instances recovery
+* Application administration panel
+* Usage documentation for each endpoint in the "Browsable API"
+* Configurable pagination for all endpoints
+* Info representation in different formats
+* Automatic score calculation
+* Obtaining the remaining assesment time after answer submition
+* Customized for Correlation One Browsable API
+* Prevention that a taker has more than one active assessment
+* Prevention of sending incorrect questions and options
+* Prevention of restarting an active or terminated instance
+* Prevention of obtaining questions from a non-activated instance
+* Prevention of sending answers in a non-activated instance
+* Extensive usage documentation
+* Versioning of the assessment API
 
-### Configuración de Django
+### Django Configuration
 
-En el archivo `codeapi/settings.py` se encuentra la configuración general de la API. Dentro de este archivo se pueden realizar todo tipo de configuraciones de Django en la que se destacan las siguientes:
+In the file `codeapi/settings.py` you will find the general configuration of the Django project. Within this file, all kinds of Django configurations can be made, in which the following stand out:
 
-* Selección y configuración del motor de base de datos.
-* Aplicaciones instaladas dentro del proyecto.
-* Configuración de zona horaria.
-* Configuración de debug del proyect.
-* Configuración específica de Django REST Framework.
-* Configuración de templates.
-* Configuración de directorio para archivos estáticos.
+* Selection and configuration of the database engine.
+* Applications installed within the project.
+* Time zone setting.
+* Project debug configuration.
+* Django REST Framework specific configuration.
+* Template configuration.
+* Directory configuration for static files.
 
-Para mayor información sobre toda la posibilidad de configuraciones, podés acceder a la documentación oficial en [este link](https://docs.djangoproject.com/en/3.2/topics/settings/).
+For more information on all the possible configurations, you can access the official documentation at [this link](https://docs.djangoproject.com/en/3.2/topics/settings/).
 
 ### Browsable API
 
-Django REST Framework tiene una funcionalidad nativa que permite hacer navegable la REST API. Esta característica es realmente una funcionalidad excelente, ya que habilita a explorar, navegar y descubrir la API sin tener que abrir ningún programa dedicado (como Postman u otros clientes).
+Django REST Framework has native functionality that makes the REST API browsable in HTML format. This feature is really an excellent functionality, as it enables you to explore, navigate, and discover the API without having to open any dedicated programs (such as Postman or other clients).
 
-Desde la Browsable API es posible realizar operaciones CRUD sobre cada uno de los modelos del sistema.
+From the Browsable API it is possible to create instances of assessments and perform all the necessary steps to complete the flow of an assessment (create, test, start, get questions, send answers, end test, get result).
 
-### Cómo usar la API
+### How to use the API
 
-El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) en el navegador. La aplicación viene con algunos datos cargados para que puedas utilizarla de manera plug & play (es necesario que hayas ejecutado el comando python manage.py loaddata .fixtures/db.json detallado el apartado de configuración inicial).
+The starting point to start using the Browsable API is to access the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser. The application comes with some data loaded so that you can use it in a plug & play way (it is necessary that you have executed the command for loaddata detailed in the initial configuration section).
 
-Para realizar un `Assesment`, comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) con un POST, ingresando los campos `first_name, last_name, email`, como JSON en el body del request. 
+To perform an `Assessment`, start by creating an` Instance` accessing the URL of a particular assessment, for example [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) with a POST, entering the `first_name, last_name, email` fields, as JSON in the request body.
 
-La respuesta del endpoint devuelve el id y la URL de la instancia creada. Con ese id podés acceder a los siguientes endpoints:
+Once the assesment is created, just follow the `next` link provided in the response body, which assist you in the whole assesment flow navigation until you finalize it.
 
-* `instances/<uuid:pk>/`: para obtener los detalles de la instancia.
-* `instances/<uuid:pk>/test`: para chequear que la instancia esté disponible para realizarse.
-* `instances/<uuid:pk>/start`: para iniciar una instancia, setear el start_time, el end_time y el flag active.
-* `instances/<uuid:pk>/questions/<int:q_id>`: en el endpoint para obtener los detalles de la instancia, en el campo `assesment->question_count` se puede obtener la cantidad de preguntas del assesment. Luego, podés acceder a cada una de ellas, desde 1 hasta question_count. Cualquier valor fuera de estos valores devolverá un código 405 Not Allowed.
-* `instances/<uuid:pk>/answer`: para enviar la respuesta sobre un assesment. Recibe un question_id y option_id en el body del request. 
-* `instances/<uuid:pk>/end`, para finalizar una instancia, setear el end_time, poner el flag active en False y calcular el score automáticamente.
-* `instances/<uuid:pk>/result`: para obtener el resultado de una instancia en particular.
-* `instances/restore`: para recuperar una instancia (en caso que haya una activa) de un taker en particular.
+The response from the endpoint returns the id and URL of the created instance. With that id you can access the following endpoints:
 
-### Crear Assesment, Questions, Options y sus asociaciones
+* `instances/<uuid: pk> /`: to get the instance details.
+* `instances/<uuid: pk>/test`: to check that the instance is available for testing.
+* `instances/<uuid: pk>/start`: to start an instance, set the start_time, the end_time and the active flag.
+* `instances/<uuid: pk>/questions/<int: q_id>`: in the endpoint to get the details of the instance, in the `assesment-> question_count` field you can get the number of questions of the assesment. Then, you can access each of them, from 1 to question_count. Any value outside of these values ​​will return a 405 Not Allowed code.
+* `instances/<uuid: pk>/answer`: to send the answer about an assessment. Get a question_id and option_id in the request body.
+* `instances/<uuid: pk>/end`, to end an instance, set the end_time, set the active flag to False and calculate the score automatically.
+* `instances/<uuid: pk>/result`: to get the result of a particular instance.
+* `instances/restore`: to recover an instance (if there is one active) of a particular taker.
 
-El servicio de la API tiene integrado un panel de administración que te permite realizar operaciones CRUD sobre cada uno de los modelos (tablas) de la aplicación. En esta imagen podés ver cómo se ve el panel de aministración.
+### Create Assesments, Questions, Options and their associations
+
+The API service has an integrated administration panel that allows you to perform CRUD operations on each of the application models (tables). In this image you can see how the administration panel looks.
 
 ![screenshot-admin-panel](doc/screenshot-admin-panel.png)
 
-Para crear distintos assesments, asignarle questions y options, es necesario ingresar al panel de administrador de la aplicación. Si ejecutaste el comando `python manage.py loaddata .fixtures/db.json` detallado el apartado de configuración inicial, se crea automáticamente un superusuario con el nombre `admin` y pass `admin` (podes cambiar la contraseña para tener una mayor seguridad).
+To create different assesments, assign questions and options, it is necessary to enter the administrator panel of the application. If you executed the command `docker-compose run code-api python manage.py loaddata .fixtures/db.json` detailed in the initial configuration section, a superuser with the name` admin` and pass `admin` is automatically created (you can change the password to have greater security).
 
-Para ingresar al panel de administrador de la aplicación ingresa en la URL [http://localhost:8000/admin](http://localhost:8000/admin), y loggeate con el usuario y contraseña de superusuario indicado previamente.
+To enter the application's administrator panel, enter the URL [http://localhost:8000/admin](http://localhost:8000/admin), and log in with the previously indicated superuser username and password.
 
-Desde el panel izquierdo podrás crear todas las entidades que consideres necesarias y las relaciones entre ellas.
+From the left panel you can create all the entities that you consider necessary and the relationships between them.
 
-> En caso de no haber ejecutado el comando `python manage.py loaddata .fixtures/db.json`, podés crear un super usuario con el comando `docker-compose run code-api python manage.py createsuperuser`, y luego loggearte en el panel de admin con el usuario creado.
+> In case you had not executed the command `docker-compose run code-api python manage.py loaddata .fixtures/db.json`, you can create a super user with the command` docker-compose run code-api python manage.py createsuperuser`, and then loggin in the admin panel with the created user.
 
-### Variables de entorno
+### Environment Variables
 
-En el archivo `env` están definidas algunas variables de entorno que utiliza el servicio de base de datos, como así también el servicio de la API. Se pueden agregar/quitar las variables necesarias. En caso de borrar accidentalmente los valores o el archivo env, a continuación podés encontrar unos valores que funcionan correctamente con la aplicación.
-
-```
-DJANGO_SECRET_KEY=sup3rs3cr3tk3y
-DJANGO_DEBUG=True
-DATABASE_NAME=postgres
-DATABASE_USER=postgres
-DATABASE_PASS=postgres
-DATABASE_HOST=db
-DATABASE_PORT=5432
-```
-
-Es **ALTAMENTE RECOMENDABLE** que cambies estas variables si querés utilizar esta aplicación con fines productivos.
-
-### Manipulación de base de datos
-
-Django provee una excelente manipulación de la base de datos sin que sea necesario usar ninguna herramienta externa para realizar las operaciones necesarias.
-
-Si se quiere realizar un backup simple de la base de datos, ejecutar el siguiente comando:
+Some environment variables used by the database service, as well as the API service, are defined in the `env` file. Necessary variables can be added/removed. In case you accidentally delete the values or the env file, below you can find some values that work correctly with the application.
 
 ```
-docker-compose run code-api su gotoiot -c \
-'python manage.py dumpdata --indent 2 > .fixtures/db.json'
+DJANGO_SECRET_KEY = sup3rs3cr3tk3y
+DJANGO_DEBUG = True
+DATABASE_NAME = codeapi
+DATABASE_USER = postgres
+DATABASE_PASS = postgres
+DATABASE_HOST = db
+DATABASE_PORT = 5432
 ```
 
-Si se quiere realizar un backup de la base de datos que pueda ser utilizado en una fresh database, ejecutar el siguiente comando:
+It is **HIGHLY RECOMMENDED**that you change these variables if you want to use this application for productive purposes.
+
+### Database manipulation
+
+Django provides excellent database manipulation without the need to use any external tools to perform the necessary operations.
+
+If you want to make a simple backup of the database, execute the following command:
 
 ```
-docker-compose run code-api su gotoiot -c \
-'python manage.py dumpdata --indent 2 --exclude auth.permission --exclude contenttypes > .fixtures/db.json'
+docker-compose run code-api \
+python manage.py dumpdata --indent 2 > .fixtures/db.json
 ```
 
-Para cargar los datos de la aplicación en una fresh database, ejecutar el siguiente comando para crear las tablas necesarias:
+If you want to make a backup of the database that can be used in a fresh database, execute the following command:
 
 ```
-docker-compose run code-api su gotoiot -c \
-'python manage.py migrate'
+docker-compose run code-api \
+python manage.py dumpdata --indent 2 \
+--exclude auth.permission --exclude contenttypes --exclude admin.logentry > .fixtures/db.json
 ```
 
-Y luego cargar datos dentro de las tablas:
+To load the application data into a fresh database, run the following command to create the necessary tables:
 
 ```
-docker-compose run code-api su gotoiot -c \
-'python manage.py loaddata .fixtures/db.json'
+docker-compose run code-api python manage.py migrate
+```
+
+And then load data inside the tables:
+
+```
+docker-compose run code-api python manage.py loaddata .fixtures/db.json
 ```
 
 </details>
 
-## Información complementaria 📚
+## Complementary information 📚
 
-En esta sección vas a encontrar información que te va a servir para tener un mayor contexto.
+In this section you will find information that will help you to have a greater context.
 
-<details><summary><b>Lee esta info</b></summary>
+<details><summary><b>Read this info</b></summary>
 
 ### ERD (Entity-Relation Desing)
 
-Para el diseño de las entidades y sus relaciones, se utilizó la herramienta online [EDR Plus](https://erdplus.com/standalone), que permite crear entidades, atributos y relaciones de manera muy sencilla. En la siguiente figura podes ver el diagrama de entidad-relacion del sistema.
+For the entities design and their relationships, the online tool [EDR Plus](https://erdplus.com/standalone) was used, which allows the creation of entities, attributes and relationships in a very simple way. In the following figure you can see the entity-relationship diagram of the system.
 
 ![architecture](doc/entity-relation-diagram.png)
 
-Un `Assesment` se define una única vez, y además de sus atributos, tiene asociado una o varias `Questions`. A su vez, cada `Questions` tiene asociada una o más `Options`.
+An `Assesment` is defined only once, and in addition to its attributes, it has one or more` Questions` associated with it. In turn, each `Questions` has one or more` Options` associated with it.
 
-Para poder realizar un `Assesment` es necesario que un `Taker` se registre con sus datos, y que cree una `Instance` de un `Assesment`. Cada `Instance` tiene, además de sus atributos, un UUID como identificador. Esto permite que, desde otro navegador se pueda recuperar la instancia en función de los datos del Taker. 
+In order to carry out an `Assesment` it is necessary for a` Taker` to register with its data, and to create an `Instance` of an` Assesment`. Each `Instance` has, in addition to its attributes, a UUID as an identifier. This allows the instance to be retrieved from another browser based on the Taker data.
 
 ### Endpoints
 
-A continuación se lista cada uno de los endpoints, con su descripción y métodos disponibles.
+Each endpoint is listed below, with its description and available methods.
 
-* `assesments/` - Muestra una lista con todos los recursos disponibles de la aplicación (GET)
-* `assesments/assesments` - Muestra una lista con todos los assesments disponibles (GET & POST)
-* `assesments/assesments/<id>` - Muestra la HOME de un test específico (GET, PUT, DELETE)
-* `assesments/assesments/<id>/status` - Chequea el estado de un assesment y devuelve su status (GET)
-* `assesments/assesments/<id>/create` - Crea una nueva instancia de un assesment y devuelve el UUID de la instancia (POST)
-* `assesments/instances` - Muestra una lista con todas las instancias disponibles (GET & POST)
-* `assesments/instances/<id>` - Muestra el detalle de la instancia (GET, PUT, DELETE)
-* `assesments/instances/<id>/test` - Chequea que la instancia este activa (GET)
-* `assesments/instances/<id>/start` - Inicia el test y empieza el countdown (POST)
-* `assesments/instances/<id>/questions/<id>` - Muestra el detalle con la pregunta de una instancia (GET)
-* `assesments/instances/<id>/answer` - Envía el resultado de una respuesta (POST)
-* `assesments/instances/<id>/end` - Finaliza una instancia (POST)
-* `assesments/instances/<id>/result` - Muestra el resultado de una instancia (GET)
-* `assesments/instances/restore` - Permite recuperar una instancia en función de los datos de un usuario (POST)
-* `assesments/takers` - Muestra una lista con todos los tests takers que realizaron assesments (GET & POST)
-* `assesments/takers/<id>` - Muestra el detalle de un taker específico (GET, PUT, DELETE)
-* `assesments/questions` - Muestra una lista con todos las questions disponibles (GET & POST)
-* `assesments/questions/<id>` - Muestra el detalle de una question específico (GET, PUT, DELETE)
-* `assesments/options` - Muestra una lista con todos las options disponibles (GET & POST)
-* `assesments/options/<id>` - Muestra el detalle de una option específico (GET, PUT, DELETE)
+* `assesments /` - Shows a list with all the available resources of the application (GET)
+* `assesments/assesments` - Show a list of all available assesments (GET)
+* `assesments/assesments/<id>` - Show the HOME of a specific test (GET)
+* `assesments/assesments/<id>/status` - Check the status of an assessment and return its status (GET)
+* `assesments/assesments/<id>/create` - Creates a new instance of an assesment and returns the UUID of the instance (POST)
+* `assesments/instances` - List all available instances (GET)
+* `assesments/instances/<id>` - Show the details of the instance (GET)
+* `assesments/instances/<id>/test` - Check that the instance is active (GET)
+* `assesments/instances/<id>/start` - Starts the test and starts the countdown (POST)
+* `assesments/instances/<id>/questions/<id>` - Show the detail with the question of an instance (GET)
+* `assesments/instances/<id>/answer` - Send the result of an answer (PUT)
+* `assesments/instances/<id>/end` - End an instance (POST)
+* `assesments/instances/<id>/result` - Show the result of an instance (GET)
+* `assesments/instances/restore` - Allows you to retrieve an instance based on user data (POST)
+* `assesments/takers` - Show a list with all the test takers that performed assesments (GET)
+* `assesments/takers/<id>` - Show the detail of a specific taker (GET)
+* `assesments/questions` - List all available questions (GET)
+* `assesments/questions/<id>` - Show the detail of a specific question (GET)
+* `assesments/options` - List all available options (GET)
+* `assesments/options/<id>` - Show the detail of a specific option (GET)
 
-Si bien en la lista anterior se encuentra la información de cada endpoint, es mucho mejor navegar mediante la `Browsable API` que permite acceder a mayor información sobre cada uno de los endpoints.
+Although the information of each endpoint is in the previous list, it is much better to navigate through the `Browsable API` that allows access to more information about each of the endpoints.
 
 ### Estructura de directorios
 
@@ -255,8 +251,6 @@ Si bien en la lista anterior se encuentra la información de cada endpoint, es m
 │   └── wsgi.py                     # utility to load Django app into WSGI servers
 ├── doc                             # dir to save documentation
 │   └── ...
-├── tests                           # dir to save test files and assets (no unit tests)
-│   └── ...
 ├── .gitignore                      # exclude files from versions control
 ├── .dockerignore                   # exclude files when build a docker image
 ├── Contribuitors.md                # project contribuitors
@@ -271,65 +265,65 @@ Si bien en la lista anterior se encuentra la información de cada endpoint, es m
 
 ### Correlation-One Requests/Responses
 
-Para entender de mejor manera la funcionalidad de la API de Correlation One, podés realizar el flujo de un assesment ingresando en [este link](https://quiz.correlation-one.com/test/data-scientist). Así mismo, revisando el tráfico de red desde la ventana de development del navegador, analizando y entendiendo la información enviada y recibida en cada request, podrás tener un mejor contexto sobre la funcionalidad necesaria.
+To better understand the functionality of the Correlation One API, you can perform an assessment flow by entering [this link](https://quiz.correlation-one.com/test/data-scientist). Likewise, by reviewing network traffic from the browser's development window, analyzing and understanding the information sent and received in each request, you will be able to have a better context about the necessary functionality.
 
-Para facilitar el acceso a la información de los endpoints, podés acceder al archivo `doc/api-requests-responses.md`, donde se encuentran guardados los requests/responses realizados contra la API de Correlation One.
+To facilitate access to endpoint information, you can access the file `doc/api-requests-responses.md`, where the requests/responses made against the Correlation One API are stored.
 
-Gran parte de la funcionalidad está inspirada en los mensajes de la API, aunque con algunas diferencias.
+Much of the functionality is inspired by API messages, albeit with a few differences.
 
 </details>
-
 
 ## TODOs 📝
 
-En esta sección podés ver las funcionalidades pendientes del proyecto y una posible forma de implementarlas.
+In this section you can see the pending functionalities of the project and a possible way to implement them.
 
-<details><summary><b>Mira la lista completa de pendientes</b></summary><br>
+<details><summary><b>See the complete to-do list</b></summary><br>
 
-* **Armar los requests con Postman**: Si bien el challenge requiere armar los requests con Postman, resulta más valioso utilizar la Browsable API y la navegación automatizada de sus flujos que utilizar Postman.
-* **Ejecutar la aplicación con un servidor web productivo.**: Para el desarrollo y demostración de la aplicación se utiliza el servidor web de desarrollo de Django. Si se quisiera implementar un servidor productivo, en [este link](https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/uwsgi/), por ejemplo, hay información para configurar uWSGI.
-* **Comprimir responses**: Si se utilizara un servidor web productivo, se podría realizar la compresión de las respuestas. En [este link](https://rtcamp.com/tutorials/nginx/enable-gzip/) hay un tutorial para habilitar Gzip en un servidor Nginx.
-* **Autenticación de usuarios**: Actualmente la API permite que cualquier usuario pueda ver los endpoints de la aplicación, y crear nuevas instancias. Se podría realizar autenticación de usuarios utilizando JWT o bien OAuth.
-* **Soportar otros formatos mas que texto**: Si bien el challenge requería que se puedan manejar más de un formato para las questions y options, en esta API solo tienen un formato (Textfield). En ese campo de texto se puede guardar tanto texto plano como HTML. Si se quisiera guardar una imagen, se podría alojar en un bucket de S3 y en el campo sólo guardar la URL.
-* **Testing automatizado.**: Si bien tener testing automatizado es una característica totalmente necesaria, para este proyecto no se implementó. Aunque implementar unit testing no resulta demasiado complejo. Si se quisiera implementar, en [este link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) se encuentra toda la información necesaria.
-
-</details>
-
-## Tecnologías utilizadas 🛠️
-
-En esta sección podés ver las tecnologías más importantes utilizadas.
-
-<details><summary><b>Mira la lista completa de tecnologías</b></summary><br>
-
-* [Docker](https://www.docker.com/) - Ecosistema que permite la ejecución de contenedores de software.
-* [Docker Compose](https://docs.docker.com/compose/) - Herramienta que permite administrar múltiples contenedores de Docker.
-* [Python](https://www.python.org/) - Lenguaje en el que están realizados los servicios.
-* [Django](https://www.djangoproject.com/) - Popular framework en Python para desarrollo de aplicaciones web.
-* [Django REST Framework](https://www.django-rest-framework.org/) - Framwork basado en Django para el diseño de REST APIs.
-* [PostgreSQL](https://www.postgresql.org/) - Base de datos para consultar y almacenar datos.
-* [Visual Studio Code](https://code.visualstudio.com/) - Popular IDE de desarrollo para múltiples plataformas.
+* **Assembling the requests with Postman**: Although the challenge requires assembling the requests with Postman, it is more valuable to use the Browsable API and the assited assesment flow navigation than to use Postman.
+* **Run the application with a productive web server**: For the development and demonstration of the application, the Django development web server is used. If you want to implement a productive server, in [this link](https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/uwsgi/), for example, there is information to configure uWSGI.
+* **SSL encryption**: This project is for demonstration purposes, and also uses the development web server provided by Django. If you want to bring this project to a productive environment, SSL should be implemented in the webserver used. For example, in [this link](https://www.youtube.com/watch?v=NhidVhNHfeU) you will find information on how to configure certificates in Nginx. Also, in [this link](https://timonweb.com/django/https-django-development-server-ssl-certificate/) there is a tutorial on how to enable HTTPS using the Django development server.
+* **User authentication**: Currently the API allows any user to see the endpoints of the application, and create new instances. User authentication could be performed using JWT or OAuth. Django, also provides built-in mechanisms for handling user authentication and authorization, but to keep the project as concise as possible, it was decided not to include this feature.
+* **Compress responses**: If a productive web server were used, compression of the responses could be performed. In [this link](https://rtcamp.com/tutorials/nginx/enable-gzip/) there is a tutorial to enable Gzip on an Nginx server.
+* **Support other formats than text**: Although the challenge required that more than one format can be handled for questions and options, in this API they only have one format (CharField). Both plain text and HTML can be stored in this text field. If you wanted to save an image, it could be hosted in an S3 bucket and only save the URL in the field.
+* **Automated testing.**: Although having automated testing is a totally necessary feature, it was not implemented for this project. Implementing unit testing is not too complex. If you want to implement it, in [this link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) you will find all the necessary information.
 
 </details>
 
-## Contribuir 🖇️
+## Used technologies 🛠️
 
-Si estás interesado en el proyecto y te gustaría sumar fuerzas para que siga creciendo y mejorando, podés abrir un hilo de discusión para charlar tus propuestas en [este link](https://github.com/agustinBassi/code-api/issues/new). Así mismo podés leer el archivo [Contribuir.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) donde están bien explicados los pasos para que puedas enviar pull requests.
+In this section you can see the most important technologies used.
 
-## Muestas de agradecimiento 🎁
+<details><summary><b>See the complete list of technologies</b></summary><br>
 
-Si te gustó este proyecto y quisieras apoyarlo, cualquiera de estas acciones estaría más que bien para mí:
+* [Docker](https://www.docker.com/) - Ecosystem that allows the execution of software containers.
+* [Docker Compose](https://docs.docker.com/compose/) - Tool that allows managing multiple Docker containers.
+* [Python](https://www.python.org/) - Language in which the services are made.
+* [Django](https://www.djangoproject.com/) - Popular Python framework for web application development.
+* [Django REST Framework](https://www.django-rest-framework.org/) - Django-based framework for designing REST APIs.
+* [PostgreSQL](https://www.postgresql.org/) - Database to query and store data.
+* [Visual Studio Code](https://code.visualstudio.com/) - Popular multi-platform development IDE.
 
-* Apoyar este proyecto con una ⭐ en Github para llegar a más personas.
-* Compartir este proyecto con otras personas.
+</details>
 
-## Autores 👥
+## Contribute 🖇️
 
-Las colaboraciones principales fueron realizadas por:
+If you are interested in the project and would like to join muscles so that it continues to grow and improve, you can open a discussion thread to discuss your proposals at [this link](https://github.com/agustinBassi/code-api/issues/new). You can also read the file [Contribute.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) where the steps are well explained so that you can send pull requests.
 
-* **[Agustin Bassi](https://github.com/agustinBassi)**: Ideación, puesta en marcha y mantenimiento del proyecto.
+## Tokens of appreciation 🎁
 
-También podés mirar todas las personas que han participado en la [lista completa de contribuyentes](https://github.com/agustinBassi/code-api/contributors).
+If you liked this project and would like to support it, any of these actions would be more than fine for me:
 
-## Licencia 📄
+* Support this project with a ⭐ on Github to reach more people.
+* Share this project with other people.
 
-Este proyecto está bajo Licencia ([MIT](https://choosealicense.com/licenses/mit/)). Podés ver el archivo [LICENSE.md](LICENSE.md) para más detalles sobre el uso de este material.
+## Authors 👥
+
+The main collaborations were made by:
+
+* **[Agustin Bassi](https://github.com/agustinBassi)**: Ideation, start-up and maintenance of the project.
+
+You can also look at all the people who have participated in the [full list of contributors](https://github.com/agustinBassi/code-api/contributors).
+
+## License 📄
+
+This project is under ([MIT](https://choosealicense.com/licenses/mit/)) License. You can see the file [LICENSE.md](LICENSE.md) for more details on the use of this material.

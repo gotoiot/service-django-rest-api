@@ -59,7 +59,11 @@ Cuando los procesos anteriores finalicen, iniciá el servicio de base de datos c
 docker-compose run code-api python manage.py migrate
 ```
 
-También será necesario que crees un `superuser` para crear los Assesments, Questions y Options dentro de la base. Podés asignar el nombre `admin` y cualquier contraseña. Ejecuta el comando `docker-compose run code-api python manage.py createsuperuser` y luego ingresa el usuario, mail y contraseña adecuados.
+En este proyecto hay incluídos unos datos de ejemplo para que puedas poner a funcionar la aplicación con información precargada. Es recomendable que importes estos datos para probar la aplicación de manera rápida sin que tengas que cargar los datos de prueba manualmente. Para cargar los datos pre-cargados, ejecuta el siguiente comando:
+
+```
+docker-compose run code-api python manage.py loaddata .fixtures/db.json
+```
 
 ### Ejecutar la aplicación
 
@@ -129,17 +133,11 @@ Desde la Browsable API es posible realizar operaciones CRUD sobre cada uno de lo
 
 ### Cómo usar la API
 
-El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. Si aún no iniciaste sesión, la API te redirigirá a la página de autenticación, donde podrás ingresar tu usuario admin y contraseña. Luego podrás tener acceso a la API. 
+El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. La aplicación viene con algunos datos cargados para que puedas utilizarla de manera plug & play (es necesario que hayas ejecutado el comando python manage.py loaddata .fixtures/db.json detallado el apartado de configuración inicial).
 
-La aplicación viene sin datos cargados sobre `Assesments`, `Takers`, `Questions`, `Options` ni `Instances`, pero al navegar podrás copiar & pegar fácilmente los snippets JSON para crear las entidades.
+Para realizar un `Assesment`, comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/assesments/assesments/1/create](http://localhost:8000/assesments/assesments/1/create) con un POST, ingresando los campos `first_name, last_name, email`, como JSON en el body del request. 
 
-El primer paso es crear al menos un `Assesment` ingresando en [http://localhost:8000/assesments/assesments](http://localhost:8000/assesments/assesments). Carga los datos necesarios y presiona el botón `Create`.
-
-Luego crea al menos dos `Questions` desde la URL [http://localhost:8000/assesments/questions](http://localhost:8000/assesments/questions). A continuación crea al menos cuatro `Options` y asocia dos a cada `Question`.
-
-Con esta información escrita en la base de datos, es momento de realizar un `Assesment`. Comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/assesments/assesments/1/create](http://localhost:8000/assesments/assesments/1/create) con un POST, ingresando los campos first_name, last_name, email, como JSON en el body del request. 
-
-La respuesta del endpoint devuelve el id de la instancia creada. Con ese id podés acceder a los siguientes endpoints:
+La respuesta del endpoint devuelve el id y la URL de la instancia creada. Con ese id podés acceder a los siguientes endpoints:
 
 * `instances/<uuid:pk>/`: para obtener los detalles de la instancia.
 * `instances/<uuid:pk>/test`: para chequear que la instancia esté disponible para realizarse.
@@ -149,6 +147,16 @@ La respuesta del endpoint devuelve el id de la instancia creada. Con ese id pod�
 * `instances/<uuid:pk>/end`, para finalizar una instancia, setear el end_time, poner el flag active en False y calcular el score automáticamente.
 * `instances/<uuid:pk>/result`: para obtener el resultado de una instancia en particular.
 * `instances/restore`: para recuperar una instancia (en caso que haya una activa) de un taker en particular.
+
+### Crear Assesment, Questions, Options y sus asociaciones
+
+Para crear distintos assesments, asignarle questions y options, es necesario ingresar al panel de administrador de la aplicación. Si ejecutaste el comando `python manage.py loaddata .fixtures/db.json` detallado el apartado de configuración inicial, se crea automáticamente un superusuario con el nombre `admin` y pass `admin` (podes cambiar la contraseña para tener una mayor seguridad).
+
+Para ingresar al panel de administrador de la aplicación ingresa en la URL [http://localhost:8000/admin](http://localhost:8000/admin), y loggeate con el usuario y contraseña de superusuario indicado previamente.
+
+Desde el panel izquierdo podrás crear todas las entidades que consideres necesarias y las relaciones entre ellas.
+
+> En caso de no haber ejecutado el comando `python manage.py loaddata .fixtures/db.json`, podés crear un super usuario con el comando `docker-compose run code-api python manage.py createsuperuser`, y luego loggearte en el panel de admin con el usuario creado.
 
 ### Variables de entorno
 

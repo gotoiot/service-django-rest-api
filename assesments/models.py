@@ -69,11 +69,14 @@ class Instance(models.Model):
         return self.duration * 60 - t.seconds
 
     def calculate_score(self):
+        questions = self.assesment.question_set.all()
+        if not questions:
+            return 0
         question_count = self.assesment.question_count
         question_value = 100 / question_count
         score = 0
         progress_status = self.progress_status
-        for question in self.assesment.question_set.all():
+        for question in questions:
             if str(question.id) in progress_status:
                 selected_option_id = progress_status[str(question.id)]
                 option = Option.objects.get(pk=selected_option_id)

@@ -20,8 +20,6 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
 @api_view(['GET'])
 def api_root(request, format=None):
     """
-    ¡Welcome to Code API project!
-
     This is the main entry point for the Assesment app.
     From this endpoint you can explore each resources by clicking in each link below.
     """
@@ -34,49 +32,69 @@ def api_root(request, format=None):
     })
 
 
-class AssesmentList(generics.ListCreateAPIView):
+class AssesmentList(generics.ListAPIView):
     """
-    From this endpoint you can get the list of assesments and create new ones. In the form at the bottom of this page you can create assesmente by two ways.
-    At one hand, you can create an assesment filling each field in the form. [google](www.google.com)On the other hand, you can insert a **JSON** in the "Raw data" tab and send a JSON body. Here are two assesment examples:
-
+    From this endpoint you can get the list of assesments.
     """
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class AssesmentDetail(generics.RetrieveUpdateDestroyAPIView):
+class AssesmentDetail(generics.RetrieveAPIView):
+    """
+    From this endpoint you can get the details of assesments created.
+    """
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class AssesmentStatus(APIView):
+    """
+    From this endpoint you can get the assesment status based in its id.
+    """
     def get(self, request, pk, format=None):
         _ = get_object_or_404(Assesment, pk=pk)
         return Response({"message": "success"}, status=status.HTTP_200_OK)
 
 
-class InstanceList(generics.ListCreateAPIView):
+class InstanceList(generics.ListAPIView):
+    """
+    From this endpoint you can get the list of instances created.
+    """
     queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class InstanceDetail(generics.RetrieveUpdateDestroyAPIView):
+class InstanceDetail(generics.RetrieveAPIView):
+    """
+    From this endpoint you can get the details of instances created.
+    """
     queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class InstanceCreate(APIView):
+    """ 
+    From this endpoint you can create and assesment instance based in assesment ID.
+
+    Here is an example for creating a new instance by providing taker data:
+        
+    {
+        "first_name": "Guido",
+        "last_name": "Van Rossum",
+        "email": "guido@python.org"
+    }        
+    
+    Here are some possibilities which don't create new instances:
+    - If user data is invalid a 400 status is returned.
+    - If user has an active instance a 405 status is returned.
+    - If taker has an inactive instance for an assesment, the instance ID is returned instead of creating a new one.
+    """
     def post(self, request, pk, format=None):
-        """ Create and assesment instance based in assesment ID.
-        If user data is invalid an is returned.
-        If user has an active instance an is returned.
-        If taker has an inactive instance for an assesment, the instance ID is returned
-        instead of creating a new one.
-        """
         assesment = get_object_or_404(Assesment, pk=pk)
         taker_serializer = TakerSerializer(data=request.data)
         if not taker_serializer.is_valid():
@@ -97,6 +115,9 @@ class InstanceCreate(APIView):
 
 
 class InstanceTest(APIView):
+    """
+    From this endpoint you can test if an instance is OK to be initiated.
+    """
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         instance_serializer = InstanceSerializer(instance, context={'request': request})
@@ -104,6 +125,10 @@ class InstanceTest(APIView):
 
 
 class InstanceStart(APIView):
+    """
+    From this endpoint you can start an instance, if the instance is not activated.
+    If the instance is activated a 405 status is returned.
+    """
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if instance.active:
@@ -117,6 +142,12 @@ class InstanceStart(APIView):
 
 
 class InstanceQuestionDetail(APIView):
+    """
+    From this endpoint you can get the question details for a selected question of an assesment instance.
+    Here are some possible errors:
+    - If the instance is inactive a 405 status is returned.
+    - If the question id <= 0 or question id > assesments max questions, a 400 status is returned.
+    """
     def get(self, request, pk, q_id, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -130,6 +161,29 @@ class InstanceQuestionDetail(APIView):
 
 
 class InstanceAnswer(APIView):
+    """ 
+    From this endpoint you can send an answer for an assesment referencing the instance.
+
+    Here is an example for sending an answer:
+        
+    {
+        "question_id": 1,
+        "option_id": 2
+    }        
+
+    If the answer is correctly saved, a response body like this is returned:
+
+    {
+        "message": "success", 
+        "remaining_seconds": 3300
+    }
+
+    Here are some possibilities which don't save an answer in database
+    - If the instance does not exists a 404 status is returned.
+    - If the instance is inactive a 405 status is returned.
+    - If the question_id or option_id are not integers a 400 status is returned.
+    - If the question_id does not match with assesment or option does not match with question, a 400 status is returned
+    """
     def put(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -148,12 +202,18 @@ class InstanceAnswer(APIView):
         if not option:
             return Response({"message": "option does not exists for the question"}, status=status.HTTP_400_BAD_REQUEST)
         
+        if not isinstance(instance.progress_status, dict):
+            instance.progress_status = dict()
         instance.progress_status[question_id] = option_id
         instance.save()
         return Response({"message": "success", "remaining_seconds": instance.remaining_seconds}, status=status.HTTP_200_OK)
 
 
 class InstanceEnd(APIView):
+    """
+    From this endpoint you can end an instance, if the instance is activated.
+    If the instance is not activated a 405 status is returned.
+    """
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -166,13 +226,31 @@ class InstanceEnd(APIView):
 
 
 class InstanceResult(APIView):
+    """
+    From this endpoint you can get an instance result and its taker.
+    """
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
-        instance_serializer = InstanceSerializer(instance, context={'request': request})
+        instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('score', 'assesment', 'taker'))
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
 class InstanceRestore(APIView):
+    """
+    From this endpoint you can restore an instance details from another browser and get its progress.
+
+    Here is an example for restore an instance based in a taker data:
+        
+    {
+        "first_name": "Guido",
+        "last_name": "Van Rossum",
+        "email": "guido@python.org"
+    }       
+
+    Here are some not success possibilities:
+    - If the instance taker data is invalid, a 400 status is returned.
+    - If the taker has not active instance, a message informing it and 200 status is returned.
+    """
     def post(self, request, format=None):
         taker_serializer = TakerSerializer(data=request.data)
         if not taker_serializer.is_valid():
@@ -186,37 +264,37 @@ class InstanceRestore(APIView):
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
-class TakerList(generics.ListCreateAPIView):
+class TakerList(generics.ListAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class TakerDetail(generics.RetrieveUpdateDestroyAPIView):
+class TakerDetail(generics.RetrieveAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class QuestionList(generics.ListCreateAPIView):
+class QuestionList(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
+class QuestionDetail(generics.RetrieveAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class OptionList(generics.ListCreateAPIView):
+class OptionList(generics.ListAPIView):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class OptionDetail(generics.RetrieveUpdateDestroyAPIView):
+class OptionDetail(generics.RetrieveAPIView):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]

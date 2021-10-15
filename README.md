@@ -56,7 +56,7 @@ docker-compose run code-api python manage.py loaddata .fixtures/db.json
 
 ### Ejecutar la aplicación
 
-Con las configuraciones iniciales realizadas, es momento de ejecutar el servicio de la API con el comando `docker-compose up -d code-api` (si querés correr el servicio de manera interactiva, podes quitar el flag -d en la ejecución). Cuando el servicio inicie, podés acceder al `API Browser` desde el navegador ingresando la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. 
+Con las configuraciones iniciales realizadas, es momento de ejecutar el servicio de la API con el comando `docker-compose up -d code-api` (si querés correr el servicio de manera interactiva, podes quitar el flag -d en la ejecución). Cuando el servicio inicie, podés acceder al `API Browser` desde el navegador ingresando la URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) en el navegador. 
 
 Si pudiste acceder al `API browser` significa que la aplicación se encuentra corriendo correctamente.
 
@@ -115,9 +115,9 @@ Desde la Browsable API es posible realizar operaciones CRUD sobre cada uno de lo
 
 ### Cómo usar la API
 
-El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/assesments](http://localhost:8000/assesments) en el navegador. La aplicación viene con algunos datos cargados para que puedas utilizarla de manera plug & play (es necesario que hayas ejecutado el comando python manage.py loaddata .fixtures/db.json detallado el apartado de configuración inicial).
+El punto inicial para comenzar a utilizar la Browsable API es acceder a la URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) en el navegador. La aplicación viene con algunos datos cargados para que puedas utilizarla de manera plug & play (es necesario que hayas ejecutado el comando python manage.py loaddata .fixtures/db.json detallado el apartado de configuración inicial).
 
-Para realizar un `Assesment`, comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/assesments/assesments/1/create](http://localhost:8000/assesments/assesments/1/create) con un POST, ingresando los campos `first_name, last_name, email`, como JSON en el body del request. 
+Para realizar un `Assesment`, comenzá creando una `Instance` accediento a la URL de un assesment en particular, por ejemplo [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) con un POST, ingresando los campos `first_name, last_name, email`, como JSON en el body del request. 
 
 La respuesta del endpoint devuelve el id y la URL de la instancia creada. Con ese id podés acceder a los siguientes endpoints:
 

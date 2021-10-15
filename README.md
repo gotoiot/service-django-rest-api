@@ -17,7 +17,7 @@ The API has a built-in functionality called "Browsable API", which allows you to
 
 This section is a guide with the essential steps so that you can start the application.
 
-<details><summary><b>See the necessary steps</b></summary><br>
+<details><summary><b>See the necessary steps</b></summary>
 
 ### Install dependencies
 
@@ -233,7 +233,7 @@ Each endpoint is listed below, with its description and available methods.
 
 Although the information of each endpoint is in the previous list, it is much better to navigate through the `Browsable API` that allows access to more information about each of the endpoints.
 
-### Estructura de directorios
+### Dirs structure
 
 ```sh
 ├── .fixtures                       # dir to save DB fixtures to export/import using Django manage.py

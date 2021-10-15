@@ -11,19 +11,19 @@ La API está desarrollada en Python con [Django REST Framework](https://www.djan
 
 A continuación podés ver las características principales del proyecto:
 
-* Browsable API
-* Paginación
-* Representación de la información en diferentes formatos.
-* Exploración de la API mediante HyperLinks.
-* Cálculo de score autmático.
-* Recuperación de instancias de assesments desde otro navegador.
-* Obtención del tiempo restante de assesment en cada nueva question.
-* Prevención que un taker tenga más de un assesment activo.
-* Prevención de envío de questions y options incorrectas.
-* Prevención de re-comenzar una instancia activa o finalizada.
-* Prevención de obtención de questions de una instancia no activada.
-* Prevención de envío de respuestas en una instancia no activada.
-* Amplia documentación de uso.
+* **Fully Browsable API**: 
+* **Paginación**: 
+* **Representación de la información en diferentes formatos.**: 
+* **Exploración de la API mediante HyperLinks.**: 
+* **Cálculo de score autmático.**: 
+* **Recuperación de instancias de assesments desde otro navegador.**: 
+* **Obtención del tiempo restante de assesment en cada nueva question.**: 
+* **Prevención que un taker tenga más de un assesment activo.**: 
+* **Prevención de envío de questions y options incorrectas.**: 
+* **Prevención de re-comenzar una instancia activa o finalizada.**: 
+* **Prevención de obtención de questions de una instancia no activada.**: 
+* **Prevención de envío de respuestas en una instancia no activada.**: 
+* **Amplia documentación de uso.**: 
 
 ## Comenzando 🚀
 

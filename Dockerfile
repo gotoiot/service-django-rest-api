@@ -20,7 +20,7 @@ RUN pip install -r requirements.txt
 STOPSIGNAL SIGHUP
 
 # Copy all code files into image. Uncomment for production
-# ADD . /app
+ADD . /app
 
 EXPOSE 8000
 

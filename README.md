@@ -286,7 +286,8 @@ En esta sección podés ver las funcionalidades pendientes del proyecto y una po
 * Agregar testing con Postman.
 * Versionar la API.
 * Testing automatizado.
-* Correr la base de datos como un volumen
+* Correr la base de datos como un volumen.
+* Ejecutar la aplicación con un servidor web productivo.
 
 </details>
 

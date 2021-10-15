@@ -3,8 +3,8 @@ version: "3"
 services:
   code-api:
     build: .
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
     ports:
       - "8000:8000"
     depends_on:

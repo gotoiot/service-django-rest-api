@@ -19,6 +19,12 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
 
 @api_view(['GET'])
 def api_root(request, format=None):
+    """
+    ¡Welcome to Code API project!
+
+    This is the main entry point for the Assesment app.
+    From this endpoint you can explore each resources by clicking in each link below.
+    """
     return Response({
         'assesments': reverse('assesments:assesment-list', request=request, format=format),
         'instances': reverse('assesments:instance-list', request=request, format=format),
@@ -29,6 +35,11 @@ def api_root(request, format=None):
 
 
 class AssesmentList(generics.ListCreateAPIView):
+    """
+    From this endpoint you can get the list of assesments and create new ones. In the form at the bottom of this page you can create assesmente by two ways.
+    At one hand, you can create an assesment filling each field in the form. [google](www.google.com)On the other hand, you can insert a **JSON** in the "Raw data" tab and send a JSON body. Here are two assesment examples:
+
+    """
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]

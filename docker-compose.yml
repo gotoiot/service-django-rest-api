@@ -12,10 +12,11 @@ services:
     env_file:
       - env
   db:
-    image: postgres
+    image: postgres:13
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      # - ./.db:/var/lib/postgresql/data
+      - ./.db2:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${DATABSE_NAME:-postgres}
+      - POSTGRES_DB=${DATABSE_NAME:-codeapi}
       - POSTGRES_USER=${DATABSE_USER:-postgres}
       - POSTGRES_PASSWORD=${DATABSE_PASS:-postgres}

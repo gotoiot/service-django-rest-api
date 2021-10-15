@@ -56,7 +56,6 @@ Para ejecutar la aplicación, primero es necesario descargar la imagen de la bas
 Cuando los procesos anteriores finalicen, iniciá el servicio de base de datos con el comando `docker-compose up -d db` desde la raíz del proyecto. Con la base de datos corriendo, es necesario crear las tablas que necesita la aplicación para funcionar con los siguientes comandos:
 
 ```
-docker-compose run code-api python manage.py makemigrations
 docker-compose run code-api python manage.py migrate
 ```
 
@@ -167,6 +166,38 @@ DATABASE_PORT=5432
 
 Es **ALTAMENTE RECOMENDABLE** que cambies estas variables si querés utilizar esta aplicación con fines productivos.
 
+### Manipulación de base de datos
+
+Django provee una excelente manipulación de la base de datos sin que sea necesario usar ninguna herramienta externa para realizar las operaciones necesarias.
+
+Si se quiere realizar un backup simple de la base de datos, ejecutar el siguiente comando:
+
+```
+docker-compose run code-api su gotoiot -c \
+'python manage.py dumpdata --indent 2 > .fixtures/db.json'
+```
+
+Si se quiere realizar un backup de la base de datos que pueda ser utilizado en una fresh database, ejecutar el siguiente comando:
+
+```
+docker-compose run code-api su gotoiot -c \
+'python manage.py dumpdata --indent 2 --exclude auth.permission --exclude contenttypes > .fixtures/db.json'
+```
+
+Para cargar los datos de la aplicación en una fresh database, ejecutar el siguiente comando para crear las tablas necesarias:
+
+```
+docker-compose run code-api su gotoiot -c \
+'python manage.py migrate'
+```
+
+Y luego cargar datos dentro de las tablas:
+
+```
+docker-compose run code-api su gotoiot -c \
+'python manage.py loaddata .fixtures/db.json'
+```
+
 </details>
 
 ## Información complementaria 📚
@@ -245,6 +276,7 @@ En esta sección podés ver las funcionalidades pendientes del proyecto y una po
 * Agregar testing con Postman.
 * Versionar la API.
 * Testing automatizado.
+* Correr la base de datos como un volumen
 
 </details>
 

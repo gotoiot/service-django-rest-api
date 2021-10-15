@@ -1,6 +1,8 @@
 <a href="https://www.correlation-one.com/">
-    <img src="doc/logo.png" alt="logo" title="Correlation One" align="right" width="60" height="60" />
+    <img src="doc/correlation-one-logo.png" alt="logo" title="Correlation One" align="right" width="60" height="60" />
 </a>
+
+[Read doc in Spanish](README-ES.md)
 
 Code API
 ========

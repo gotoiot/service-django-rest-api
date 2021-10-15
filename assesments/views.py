@@ -41,13 +41,18 @@ class AssesmentList(generics.ListAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class AssesmentDetail(generics.RetrieveAPIView):
+class AssesmentDetail(APIView):
     """
     From this endpoint you can get the details of assesments created.
     """
-    queryset = Assesment.objects.all()
-    serializer_class = AssesmentSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    def get(self, request, pk, format=None):
+        assesment = get_object_or_404(Assesment, pk=pk)
+        assesment_serializer = AssesmentSerializer(assesment, context={'request': request})
+        response_data = {
+            "next": reverse('assesments:instance-creation', args=[assesment.id], request=request, format=format),
+        }
+        response_data.update(assesment_serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class AssesmentStatus(APIView):

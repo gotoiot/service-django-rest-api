@@ -120,7 +120,7 @@ class InstanceTest(APIView):
     """
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
-        instance_serializer = InstanceSerializer(instance, context={'request': request})
+        instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'finalized'))
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -133,6 +133,8 @@ class InstanceStart(APIView):
         instance = get_object_or_404(Instance, pk=pk)
         if instance.active:
             return Response({"message": "instance was already activated"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if instance.finalized:
+            return Response({"message": "not possible to start a finished instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         instance.start_time = timezone.now()
         instance.end_time = instance.start_time + datetime.timedelta(minutes=instance.duration)
         instance.active = True
@@ -152,6 +154,8 @@ class InstanceQuestionDetail(APIView):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
             return Response({"message": "not allowed access questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if instance.finalized:
+            return Response({"message": "not possible to get question for a finished instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         questions = instance.assesment.question_set.all()
         if q_id <= 0 or q_id > len(questions):
             return Response({"message": "invalid question id"}, status=status.HTTP_400_BAD_REQUEST)
@@ -188,7 +192,9 @@ class InstanceAnswer(APIView):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
             return Response({"message": "not allowed answer questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        
+        if instance.finalized:
+            return Response({"message": "not possible to answer a question for a finished instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
         question_id = request.data.get('question_id')
         option_id = request.data.get('option_id')
         if not isinstance(question_id, int) or not isinstance(option_id, int):
@@ -218,11 +224,14 @@ class InstanceEnd(APIView):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
             return Response({"message": "only activated instances can be ended"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if instance.finalized:
+            return Response({"message": "not possible to finalize an instance again"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         instance.end_time = timezone.now()
         instance.active = False
+        instance.finalized = True
         instance.score = instance.calculate_score()
         instance.save()
-        return Response({"message": "success"}, status=status.HTTP_200_OK)
+        return Response({"message": "success", "result": reverse('assesments:instance-result', args=[pk], request=request, format=format)}, status=status.HTTP_200_OK)
 
 
 class InstanceResult(APIView):
@@ -231,6 +240,10 @@ class InstanceResult(APIView):
     """
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        if not instance.finalized:
+            return Response({"message": "not possible to show result for non finalized instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if instance.active:
+            return Response({"message": "not possible to show result for an active instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('score', 'assesment', 'taker'))
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
@@ -256,11 +269,12 @@ class InstanceRestore(APIView):
         if not taker_serializer.is_valid():
             return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
         
-        current_instance = Instance.objects.filter(taker__email=taker_serializer.validated_data['email'], active=True).first()
+        current_instance = Instance.objects.filter(
+            taker__email=taker_serializer.validated_data['email'], active=True, finalized=False).first()
         if not current_instance:
             return Response({"message": "user has not active assesment instances"}, status=status.HTTP_200_OK)
 
-        instance_serializer = InstanceSerializer(current_instance, context={'request': request})
+        instance_serializer = InstanceSerializer(current_instance, context={'request': request}, fields=('url', 'duration', 'end_date', 'assesment', 'taker', 'remaining_seconds'))
         return Response(instance_serializer.data, status=status.HTTP_200_OK)
 
 

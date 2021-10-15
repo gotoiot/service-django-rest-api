@@ -81,36 +81,6 @@ En esta sección vas a encontrar la información para entender y configurar el p
 
 <details><summary><b>Mira los detalles</b></summary>
 
-### Estructura de directorios
-
-```sh
-├── assesments (important files)    # main assesments app dir
-│   ├── migrations                  # dir to track DB modifications
-│   ├── admin.py                    # register assesments model into admin interface
-│   ├── models.py                   # assesments models declaration
-│   ├── serializers.py              # classes for serialize/deserialize models instances
-│   ├── urls.py                     # configuration of app routes
-│   └── views.py                    # bussiness logic function and classes
-├── codeapi                         # main Django project
-│   ├── asgi.py                     # utility to load Django app into ASGI servers
-│   ├── settings.py                 # main Django project settings
-│   ├── urls.py                     # main Django project URLs configuration
-│   └── wsgi.py                     # utility to load Django app into WSGI servers
-├── data                            # database files (managed by PostgreSQL)
-├── doc                             # dir to save documentation
-│   └── ...
-├── snippets                        # snippet application dir
-│   └── ...
-├── Contribuitors.md                # project contribuitors
-├── Dockerfile                      # Dockerfile for Django project
-├── LICENSE                         # licencia del proyecto
-├── README.md                       # este archivo
-├── docker-compose.yml              # configuración de los contenedores de Docker centralizada
-├── env                             # variables de entorno utilizadas en el proyecto
-├── manage.py                       # archivo con utilidades nativas de Django
-└── requirements.txt                # dependencias de Python del proyecto
-```
-
 ### Configuración de Django
 
 En el archivo `codeapi/settings.py` se encuentra la configuración general de la API. Dentro de este archivo se pueden realizar todo tipo de configuraciones de Django en la que se destacan las siguientes:
@@ -250,6 +220,38 @@ A continuación se lista cada uno de los endpoints, con su descripción y métod
 * `assesments/options/<id>` - Muestra el detalle de una option específico (GET, PUT, DELETE)
 
 Si bien en la lista anterior se encuentra la información de cada endpoint, es mucho mejor navegar mediante la `Browsable API` que permite acceder a mayor información sobre cada uno de los endpoints.
+
+### Estructura de directorios
+
+```sh
+├── .fixtures                       # dir to save DB fixtures to export/import using Django manage.py
+├── assesments (important files)    # main assesments app dir
+│   ├── migrations                  # dir to track DB modifications
+│   ├── admin.py                    # register assesments model into admin interface
+│   ├── models.py                   # assesments models declaration
+│   ├── serializers.py              # classes for serialize/deserialize models instances
+│   ├── urls.py                     # configuration of app routes
+│   └── views.py                    # bussiness logic function and classes
+├── codeapi                         # main Django project
+│   ├── asgi.py                     # utility to load Django app into ASGI servers
+│   ├── settings.py                 # main Django project settings
+│   ├── urls.py                     # main Django project URLs configuration
+│   └── wsgi.py                     # utility to load Django app into WSGI servers
+├── doc                             # dir to save documentation
+│   └── ...
+├── tests                           # dir to save test files and assets (no unit tests)
+│   └── ...
+├── .gitignore                      # exclude files from versions control
+├── .dockerignore                   # exclude files when build a docker image
+├── Contribuitors.md                # project contribuitors
+├── Dockerfile                      # Dockerfile for Django project
+├── LICENSE                         # licencia del proyecto
+├── README.md                       # este archivo
+├── docker-compose.yml              # configuración de los contenedores de Docker centralizada
+├── env                             # variables de entorno utilizadas en el proyecto
+├── manage.py                       # archivo con utilidades nativas de Django
+└── requirements.txt                # dependencias de Python del proyecto
+```
 
 ### Correlation-One Requests/Responses
 

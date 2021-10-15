@@ -39,29 +39,133 @@
   }
 },
 {
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2021-10-15T02:38:44.572Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "Write dataframe option 1 for Write dataframe",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2021-10-15T02:39:08.973Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "Write dataframe option 2 for Write dataframe",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2021-10-15T02:39:59.162Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "3",
+    "object_repr": "Read dataframe option 1 for Read dataframe",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2021-10-15T02:40:18.281Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "4",
+    "object_repr": "Read dataframe option 2 for Read dataframe",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2021-10-15T02:55:10.365Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "1",
+    "object_repr": "admin",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Email address\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2021-10-15T03:54:15.939Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "f601026f-aea0-489c-921a-541c7191c0fc",
+    "object_repr": "f601026f-aea0-489c-921a-541c7191c0fc for \"Data Science Assesment\"",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Active\", \"Finalized\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2021-10-15T03:55:18.878Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "f601026f-aea0-489c-921a-541c7191c0fc",
+    "object_repr": "f601026f-aea0-489c-921a-541c7191c0fc for \"Data Science Assesment\"",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Active\", \"Finalized\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2021-10-15T04:00:51.109Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "f601026f-aea0-489c-921a-541c7191c0fc",
+    "object_repr": "f601026f-aea0-489c-921a-541c7191c0fc for \"Data Science Assesment\"",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Active\", \"Finalized\"]}}]"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$260000$H4OZy8ypfmmUVW5K38tsZc$7QBNlpGBOVhXS/8DlHOpDh0BRr6DzYQFRp/h/rrJHEw=",
-    "last_login": "2021-10-14T23:20:33.806Z",
+    "last_login": "2021-10-15T02:37:45Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",
     "last_name": "",
-    "email": "jagustinbassi@gmail.com",
+    "email": "admin@correlationone.com",
     "is_staff": true,
     "is_active": true,
-    "date_joined": "2021-10-14T23:20:01.729Z",
+    "date_joined": "2021-10-14T23:20:01Z",
     "groups": [],
     "user_permissions": []
   }
 },
 {
   "model": "sessions.session",
-  "pk": "m3oi50yjbys5655y8jdr2pftrge2cgh9",
+  "pk": "ntxzyu48a91jby2mhj36n472dgig0w1q",
   "fields": {
-    "session_data": ".eJxVjMsOwiAURP-FtSG8Hy7d9xsIlwtSNZCUdmX8d9ukC91N5pyZNwlxW2vYRl7CjORKOLn8dhDTM7cD4CO2e6ept3WZgR4KPemgU8f8up3u30GNo-5rV1AKLhKqyAEVeu-1KLkA2j0woZIE5RJ31qJBYbTRkhkoXGdkBTP5fAHotzgL:1mbA1Z:ryqMWLM4YsnuLnGz6FDKVXvzmD9UvR1i7Q9AySypq4k",
-    "expire_date": "2021-10-28T23:20:33.808Z"
+    "session_data": ".eJxVjMsOwiAURP-FtSG8Hy7d9xsIlwtSNZCUdmX8d9ukC91N5pyZNwlxW2vYRl7CjORKOLn8dhDTM7cD4CO2e6ept3WZgR4KPemgU8f8up3u30GNo-5rV1AKLhKqyAEVeu-1KLkA2j0woZIE5RJ31qJBYbTRkhkoXGdkBTP5fAHotzgL:1mbD6P:Nm3wJsXyVLk3uGnQtZbfe_pTF2uSeNE0TA3crIby2sY",
+    "expire_date": "2021-10-29T02:37:45.322Z"
   }
 },
 {
@@ -73,6 +177,40 @@
     "description": "This assesment is for Data Science developer who is aiming to new job. \r\nComplete a question one by one selecting the choices, and finish it when you are done.",
     "thanks_message": "<p>Thanks for complete the assesment!</p>",
     "language": "python"
+  }
+},
+{
+  "model": "assesments.instance",
+  "pk": "f601026f-aea0-489c-921a-541c7191c0fc",
+  "fields": {
+    "duration": 60,
+    "score": 50,
+    "start_date": "2021-10-15T02:14:20Z",
+    "end_date": "2021-10-15T02:14:20Z",
+    "active": false,
+    "finalized": true,
+    "progress_status": {
+      "1": 2,
+      "2": 3
+    },
+    "assesment": 1,
+    "taker": 1
+  }
+},
+{
+  "model": "assesments.taker",
+  "pk": 1,
+  "fields": {
+    "first_name": "Guido",
+    "last_name": "Van Rossum",
+    "age": null,
+    "experience_years": 0,
+    "current_position": "",
+    "mobile_phone": "",
+    "email": "guido@python.org",
+    "profile": "",
+    "genre": "",
+    "nationality": "US"
   }
 },
 {
@@ -95,6 +233,50 @@
     "category": "Python, Pandas",
     "question_type": "m",
     "assesment": 1
+  }
+},
+{
+  "model": "assesments.option",
+  "pk": 1,
+  "fields": {
+    "title": "Write dataframe option 1",
+    "text": "os.write(df, \"path\")",
+    "is_correct": false,
+    "option_type": "Selection",
+    "question": 1
+  }
+},
+{
+  "model": "assesments.option",
+  "pk": 2,
+  "fields": {
+    "title": "Write dataframe option 2",
+    "text": "df.save(\"path\")",
+    "is_correct": true,
+    "option_type": "Selection",
+    "question": 1
+  }
+},
+{
+  "model": "assesments.option",
+  "pk": 3,
+  "fields": {
+    "title": "Read dataframe option 1",
+    "text": "os.read(\"path\")",
+    "is_correct": false,
+    "option_type": "Selection",
+    "question": 2
+  }
+},
+{
+  "model": "assesments.option",
+  "pk": 4,
+  "fields": {
+    "title": "Read dataframe option 2",
+    "text": "pandas.read(\"path\")",
+    "is_correct": true,
+    "option_type": "Selection",
+    "question": 2
   }
 }
 ]

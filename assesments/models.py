@@ -53,6 +53,7 @@ class Instance(models.Model):
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=False)
+    finalized = models.BooleanField(default=False)
     progress_status = models.JSONField(null=True, blank=True)
     assesment = models.ForeignKey('Assesment', on_delete=models.CASCADE, default='')
     taker = models.ForeignKey('Taker', on_delete=models.RESTRICT, default='')
@@ -63,7 +64,7 @@ class Instance(models.Model):
 
     @property
     def remaining_seconds(self):
-        if not self.active:
+        if not self.active or self.finalized:
             return 0
         t = timezone.now() - self.end_date
         return self.duration * 60 - t.seconds

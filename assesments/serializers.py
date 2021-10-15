@@ -54,7 +54,7 @@ class InstanceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Instance
-        fields = ('url', 'id', 'duration', 'score', 'start_date', 'end_date', 'active', 'progress_status', 'assesment', 'taker')
+        fields = ('url', 'id', 'duration', 'score', 'start_date', 'end_date', 'active', 'finalized', 'progress_status', 'assesment', 'taker', 'remaining_seconds')
         extra_kwargs = {
             'url': {'view_name': 'assesments:instance-detail', 'lookup_field': 'pk'},
         }

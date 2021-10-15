@@ -9,21 +9,33 @@ Este proyecto es una API para realizar challenges de codigo para puestos de trab
 
 La API está desarrollada en Python con [Django REST Framework](https://www.django-rest-framework.org/) (DRF) que permite crear RESTful APIs de manera consistente y escalable. Así mismo se ejecuta sobre un contenedor de Docker que permite correr la aplicación de igual manera en múltiples entornos. La base de datos utilizada para guardar la información de los assesments, takers, y preguntas, es PostgreSQL, también corriendo sobre un contenedor de Docker. 
 
+Django REST Framework viene con una funcionalidad llamada "Browsable API", que permite explorar toda la API desde un navegador web, y en esta imagen podés ver la vista principal de la API de assesments.
+
+![screenshot-browsable-api](doc/screenshot-browsable-api.png)
+
+Así mismo, el framework Django provee un panel de administración que permite realizar operaciones CRUD sobre cada uno de los modelos (tablas) de la aplicación. En esta imagen podés ver cómo se ve el panel de aministración.
+
+![screenshot-admin-panel](doc/screenshot-admin-panel.png)
+
 A continuación podés ver las características principales del proyecto:
 
-* **Fully Browsable API**: 
-* **Paginación**: 
-* **Representación de la información en diferentes formatos.**: 
-* **Exploración de la API mediante HyperLinks.**: 
-* **Cálculo de score autmático.**: 
-* **Recuperación de instancias de assesments desde otro navegador.**: 
-* **Obtención del tiempo restante de assesment en cada nueva question.**: 
-* **Prevención que un taker tenga más de un assesment activo.**: 
-* **Prevención de envío de questions y options incorrectas.**: 
-* **Prevención de re-comenzar una instancia activa o finalizada.**: 
-* **Prevención de obtención de questions de una instancia no activada.**: 
-* **Prevención de envío de respuestas en una instancia no activada.**: 
-* **Amplia documentación de uso.**: 
+* **RESTful API totalmente explorable mediante la "Browsable API"**
+* **Exploración de la API mediante HyperLinks**
+* **Navegación asistida para todos los flujos de la aplicación**
+* **Recuperación de instancias de assesments**
+* **Panel de administración de la aplicación**
+* **Documentación de uso de cada endpoint en la "Browsable API"**
+* **Paginación en todos los endpoints**
+* **Representación de la información en diferentes formatos**
+* **Cálculo de score autmático**
+* **Obtención del tiempo restante de assesment en cada nueva question**
+* **Personalización de API**
+* **Prevención que un taker tenga más de un assesment activo**
+* **Prevención de envío de questions y options incorrectas**
+* **Prevención de re-comenzar una instancia activa o finalizada**
+* **Prevención de obtención de questions de una instancia no activada**
+* **Prevención de envío de respuestas en una instancia no activada**
+* **Amplia documentación de uso**
 
 ## Comenzando 🚀
 

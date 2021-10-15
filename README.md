@@ -288,6 +288,7 @@ En esta sección podés ver las funcionalidades pendientes del proyecto y una po
 * Testing automatizado.
 * Correr la base de datos como un volumen.
 * Ejecutar la aplicación con un servidor web productivo.
+* Comprimir la respuesta
 
 </details>
 

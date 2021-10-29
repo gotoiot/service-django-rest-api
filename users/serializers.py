@@ -4,6 +4,7 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 
 from users.models import ApiUser
 
+# TODO understand how to configure serializers
 
 class ApiUserSerializer(serializers.ModelSerializer):
 

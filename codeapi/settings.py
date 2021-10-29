@@ -169,18 +169,21 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# TODO: Comment meaning of each setting or group
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[ Code API ] '
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.ApiUserRegistrationSerializer',
     'USER_DETAILS_SERIALIZER': 'users.serializers.ApiUserSerializer',
 }
 
-LOGIN_URL = 'http://localhost:8000/dj-rest-auth/login'
+LOGIN_URL = 'http://localhost:8000/auth/login'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

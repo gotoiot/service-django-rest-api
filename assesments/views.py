@@ -10,6 +10,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from django.utils import timezone
 from rest_framework.exceptions import APIException
+from rest_framework.decorators import api_view, permission_classes
 
 from assesments.models import Assesment, Instance, Option, Question, Taker
 from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
@@ -18,6 +19,7 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
 
 
 @api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
 def api_root(request, format=None):
     """
     This is the main entry point for the Assesment app.
@@ -38,13 +40,15 @@ class AssesmentList(generics.ListAPIView):
     """
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class AssesmentDetail(APIView):
     """
     From this endpoint you can get the details of assesments created.
     """
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, pk, format=None):
         assesment = get_object_or_404(Assesment, pk=pk)
         assesment_serializer = AssesmentSerializer(assesment, context={'request': request})
@@ -59,6 +63,8 @@ class AssesmentStatus(APIView):
     """
     From this endpoint you can get the assesment status based in its id.
     """
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, pk, format=None):
         _ = get_object_or_404(Assesment, pk=pk)
         return Response({"message": "success"}, status=status.HTTP_200_OK)
@@ -68,18 +74,20 @@ class InstanceList(generics.ListAPIView):
     """
     From this endpoint you can get the list of instances created.
     """
+    # TODO add a permission to return instances of a user
     queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class InstanceDetail(generics.RetrieveAPIView):
     """
     From this endpoint you can get the details of instances created.
     """
+    # TODO add a permission to return instances of a user
     queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class InstanceCreate(APIView):
@@ -99,6 +107,8 @@ class InstanceCreate(APIView):
     - If user has an active instance a 405 status is returned.
     - If taker has an inactive instance for an assesment, the instance ID is returned instead of creating a new one.
     """
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, pk, format=None):
         assesment = get_object_or_404(Assesment, pk=pk)
         taker_serializer = TakerSerializer(data=request.data)
@@ -127,6 +137,8 @@ class InstanceTest(APIView):
     """
     From this endpoint you can test if an instance is OK to be initiated.
     """
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'finalized'))
@@ -142,6 +154,8 @@ class InstanceStart(APIView):
     From this endpoint you can start an instance, if the instance is not activated.
     If the instance is activated a 405 status is returned.
     """
+    permission_classes = [permissions.IsAuthenticated]
+    
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if instance.active:
@@ -167,6 +181,8 @@ class InstanceQuestionDetail(APIView):
     - If the instance is inactive a 405 status is returned.
     - If the question id <= 0 or question id > assesments max questions, a 400 status is returned.
     """
+    permission_classes = [permissions.IsAuthenticated]
+    
     def get(self, request, pk, q_id, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -211,6 +227,8 @@ class InstanceAnswer(APIView):
     - If the question_id or option_id are not integers a 400 status is returned.
     - If the question_id does not match with assesment or option does not match with question, a 400 status is returned
     """
+    permission_classes = [permissions.IsAuthenticated]
+    
     def put(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -254,6 +272,8 @@ class InstanceEnd(APIView):
     From this endpoint you can end an instance, if the instance is activated.
     If the instance is not activated a 405 status is returned.
     """
+    permission_classes = [permissions.IsAuthenticated]
+    
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.active:
@@ -277,6 +297,8 @@ class InstanceResult(APIView):
     """
     From this endpoint you can get an instance result and its taker.
     """
+    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
         if not instance.finalized:
@@ -307,6 +329,8 @@ class InstanceRestore(APIView):
     - If the instance taker data is invalid, a 400 status is returned.
     - If the taker has not active instance, a message informing it and 200 status is returned.
     """
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, format=None):
         taker_serializer = TakerSerializer(data=request.data)
         if not taker_serializer.is_valid():
@@ -328,34 +352,35 @@ class InstanceRestore(APIView):
 class TakerList(generics.ListAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class TakerDetail(generics.RetrieveAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    # TODO add a permission to return details of a user
+    permission_classes = [permissions.IsAdminUser]
 
 
 class QuestionList(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class QuestionDetail(generics.RetrieveAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class OptionList(generics.ListAPIView):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class OptionDetail(generics.RetrieveAPIView):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]

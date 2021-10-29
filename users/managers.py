@@ -2,14 +2,12 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
 
-# TODO How the manager works? 
-
 class ApiUserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
     """
-    
+
     def create_user(self, email, password, **extra_fields):
         """
         Create and save a User with the given email and password.
@@ -25,6 +23,7 @@ class ApiUserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         """
         Create and save a SuperUser with the given email and password.
+        This func automatically creates EmailAddress entry in a safety way.
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -34,4 +33,14 @@ class ApiUserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
-        return self.create_user(email, password, **extra_fields)
+        
+        user = self.create_user(email, password, **extra_fields)
+
+        try:
+            from allauth.account.models import EmailAddress
+            print(f"Creating a EmailAddress entry from superuser")
+            EmailAddress.objects.create(user=user, email=user.email, verified=True, primary=True)
+        except:
+            print("Superuser has not been added to EmailAddress all-auth table. Add it manually please!")
+
+        return user

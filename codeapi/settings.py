@@ -169,8 +169,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# TODO: Comment meaning of each setting or group
 
+# LOGIN_URL = 'http://localhost:8000/auth/login'
+
+
+# TODO: Comment meaning of each setting or group
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
@@ -178,12 +181,19 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[ Code API ] '
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/auth/login' 
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/auth/login'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.ApiUserRegistrationSerializer',
-    'USER_DETAILS_SERIALIZER': 'users.serializers.ApiUserSerializer',
 }
 
-LOGIN_URL = 'http://localhost:8000/auth/login'
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'users.serializers.ApiUserLoginSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.ApiUserDetailSerializer',
+}
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

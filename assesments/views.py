@@ -40,14 +40,14 @@ class AssesmentList(generics.ListAPIView):
     """
     queryset = Assesment.objects.all()
     serializer_class = AssesmentSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated | permissions.IsAdminUser]
 
 
 class AssesmentDetail(APIView):
     """
     From this endpoint you can get the details of assesments created.
     """
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated | permissions.IsAdminUser]
 
     def get(self, request, pk, format=None):
         assesment = get_object_or_404(Assesment, pk=pk)
@@ -63,7 +63,7 @@ class AssesmentStatus(APIView):
     """
     From this endpoint you can get the assesment status based in its id.
     """
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated | permissions.IsAdminUser]
 
     def get(self, request, pk, format=None):
         _ = get_object_or_404(Assesment, pk=pk)

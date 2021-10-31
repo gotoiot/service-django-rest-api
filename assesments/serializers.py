@@ -26,14 +26,15 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         taker = Taker.objects.filter(email=validated_data['email']).first()
         if taker:
-            if taker.first_name != validated_data['first_name'] or taker.last_name != validated_data['last_name']:
-                raise serializers.ValidationError({"message": "The email registered and taker names do not match"})
+            # if taker.first_name != validated_data['first_name'] or taker.last_name != validated_data['last_name']:
+            #     raise serializers.ValidationError({"message": "The email registered and taker names do not match"})
             return taker
         return Taker.objects.create(**self.validated_data)
 
     class Meta:
         model = Taker
-        fields = ('url', 'id', 'first_name', 'last_name', 'age', 'experience_years', 'current_position', 'mobile_phone', 'email', 'profile', 'genre', 'nationality',)
+        # fields = ('url', 'id', 'first_name', 'last_name', 'age', 'experience_years', 'current_position', 'mobile_phone', 'email', 'profile', 'genre', 'nationality',)
+        fields = ('url', 'id', 'age', 'experience_years', 'current_position', 'mobile_phone', 'profile', 'genre', 'nationality',)
         extra_kwargs = {
             'url': {'view_name': 'assesments:taker-detail', 'lookup_field': 'pk'},
         }
@@ -41,7 +42,8 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
 class InstanceSerializer(serializers.HyperlinkedModelSerializer):
     assesment = AssesmentSerializer()
-    taker = TakerSerializer(fields=('id', 'first_name', 'last_name', 'email', 'url'))
+    # taker = TakerSerializer(fields=('id', 'first_name', 'last_name', 'email', 'url'))
+    taker = TakerSerializer(fields=('id', 'url'))
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)

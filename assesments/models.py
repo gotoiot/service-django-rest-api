@@ -5,6 +5,11 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+
+from users.models import ApiUser
 
 
 class Assesment(models.Model):
@@ -101,48 +106,6 @@ class Instance(models.Model):
         ordering = ['-id']
 
 
-class Taker(models.Model):
-    """Model representing a specific instance of an assesment taker"""
-    GENRE_CHOICES = (
-        ('m', 'Male'),
-        ('f', 'Female'),
-        ('n', 'No binary'),
-    )
-    COUNTRY_CHOICES = (
-        ('AR', 'Argentina'),
-        ('US', 'United States'),
-    )
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    age = models.IntegerField(blank=True, null=True)
-    experience_years = models.IntegerField(blank=True, default=0)
-    current_position = models.CharField(max_length=200, blank=True, default='')
-    mobile_phone = models.CharField(max_length=50, blank=True, default='')
-    email = models.EmailField()
-    profile = models.CharField(max_length=200, blank=True, default='')
-    genre = models.CharField(
-        max_length=1,
-        choices=GENRE_CHOICES,
-        blank=True,
-        default='',
-        help_text='Taker genre',
-    )
-    nationality = models.CharField(
-        max_length=2,
-        choices=COUNTRY_CHOICES, 
-        blank=True,
-        default='US', 
-        help_text='Taker nationality',
-    )
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return f'{self.last_name}, {self.first_name}'
-
-    class Meta:
-        ordering = ['-id']
-
-
 class Question(models.Model):
     """Model representing a specific instance of an assesment question"""
 
@@ -194,3 +157,52 @@ class Option(models.Model):
     
     class Meta:
         ordering = ['id']
+
+
+class Taker(models.Model):
+    """Model representing a specific instance of an assesment taker"""
+    GENRE_CHOICES = (
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('n', 'No binary'),
+    )
+    COUNTRY_CHOICES = (
+        ('AR', 'Argentina'),
+        ('US', 'United States'),
+    )
+    user = models.OneToOneField(get_user_model(), null=True, on_delete=models.CASCADE)
+
+    age = models.IntegerField(blank=True, null=True)
+    experience_years = models.IntegerField(blank=True, default=0)
+    current_position = models.CharField(max_length=200, blank=True, default='')
+    mobile_phone = models.CharField(max_length=50, blank=True, default='')
+    profile = models.CharField(max_length=200, blank=True, default='')
+    genre = models.CharField(
+        max_length=1,
+        choices=GENRE_CHOICES,
+        blank=True,
+        default='',
+        help_text='Taker genre',
+    )
+    nationality = models.CharField(
+        max_length=2,
+        choices=COUNTRY_CHOICES, 
+        blank=True,
+        default='', 
+        help_text='Taker nationality',
+    )
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'{self.user.last_name}, {self.user.first_name}'
+
+
+@receiver(post_save, sender=ApiUser)
+def create_taker(sender, instance, created, **kwargs):
+    if created:
+        Taker.objects.create(user=instance)
+
+
+@receiver(post_save, sender=ApiUser)
+def save_taker(sender, instance, **kwargs):
+    instance.taker.save()

@@ -14,6 +14,8 @@ class AssesmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TakerSerializer(serializers.HyperlinkedModelSerializer):
+    # TODO add ApiUser serializer as read only
+
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
         super(TakerSerializer, self).__init__(*args, **kwargs)
@@ -25,11 +27,19 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         taker = Taker.objects.filter(email=validated_data['email']).first()
-        if taker:
-            # if taker.first_name != validated_data['first_name'] or taker.last_name != validated_data['last_name']:
-            #     raise serializers.ValidationError({"message": "The email registered and taker names do not match"})
-            return taker
-        return Taker.objects.create(**self.validated_data)
+        return taker if taker else Taker.objects.create(**self.validated_data)
+
+    def update(self, instance, validated_data): 
+        instance.age = validated_data.get('age', instance.age)
+        instance.experience_years = validated_data.get('experience_years', instance.experience_years)
+        instance.current_position = validated_data.get('current_position', instance.current_position)
+        instance.mobile_phone = validated_data.get('mobile_phone', instance.mobile_phone)
+        instance.profile = validated_data.get('profile', instance.profile)
+        instance.genre = validated_data.get('genre', instance.genre)
+        instance.nationality = validated_data.get('nationality', instance.nationality)
+        instance.save()
+        print(f"Validated data is: {validated_data}")
+        return instance
 
     class Meta:
         model = Taker

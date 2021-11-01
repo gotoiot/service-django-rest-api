@@ -194,7 +194,7 @@ class Taker(models.Model):
 
     def __str__(self):
         """String for representing the Model object."""
-        return f'{self.user.last_name}, {self.user.first_name}'
+        return f'{self.user.last_name}, {self.user.first_name}, {self.user.email}'
 
 
 @receiver(post_save, sender=ApiUser)

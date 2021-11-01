@@ -22,6 +22,7 @@ urlpatterns = [
     path('instances/restore', views.InstanceRestore.as_view(), name="instance-restore"),
     path('takers/', views.TakerList.as_view(), name='taker-list'),
     path('takers/<int:pk>/', views.TakerDetail.as_view(), name="taker-detail"),
+    path('takers/me', views.TakerDetailMeAnswer.as_view(), name='taker-detail-me'),
     path('questions/', views.QuestionList.as_view(), name='question-list'),
     path('questions/<int:pk>/', views.QuestionDetail.as_view(), name='question-detail'),
     path('options/', views.OptionList.as_view(), name='option-list'),

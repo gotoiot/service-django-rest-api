@@ -19,19 +19,25 @@ from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([permissions.IsAuthenticated | permissions.IsAdminUser])
 def api_root(request, format=None):
     """
     This is the main entry point for the Assesment app.
     From this endpoint you can explore each resources by clicking in each link below.
     """
-    return Response({
+    # TODO check if it is the best way to do that
+    # Read taker as api user to don't depend of two models to determine the same
+    api_user = Taker.objects.filter(user=request.user).first()
+
+    response = {
         'assesments': reverse('assesments:assesment-list', request=request, format=format),
-        'instances': reverse('assesments:instance-list', request=request, format=format),
-        'takers': reverse('assesments:taker-list', request=request, format=format),
-        'questions': reverse('assesments:question-list', request=request, format=format),
-        'options': reverse('assesments:option-list', request=request, format=format),
-    })
+    }
+    if api_user.user.is_superuser or api_user.user.is_staff:
+        response['instances'] = reverse('assesments:instance-list', request=request, format=format)
+        response['takers'] = reverse('assesments:taker-list', request=request, format=format)
+        response['questions'] = reverse('assesments:question-list', request=request, format=format)
+        response['options'] = reverse('assesments:option-list', request=request, format=format)
+    return Response(response, status=status.HTTP_200_OK)
 
 
 class AssesmentList(generics.ListAPIView):
@@ -93,17 +99,11 @@ class InstanceDetail(generics.RetrieveAPIView):
 class InstanceCreate(APIView):
     """ 
     From this endpoint you can create and assesment instance based in assesment ID.
-
-    Here is an example for creating a new instance by providing taker data:
-        
-    {
-        "first_name": "Guido",
-        "last_name": "Van Rossum",
-        "email": "guido@python.org"
-    }        
+    You must be logged in and have to make a POST to this endpoint in order to 
+    create an instance. Just follow 'next' after creation.
     
-    Here are some possibilities which don't create new instances:
-    - If user data is invalid a 400 status is returned.
+    Here are some possibilities which won't create new instances:
+    - If user is admin or staff
     - If user has an active instance a 405 status is returned.
     - If taker has an inactive instance for an assesment, the instance ID is returned instead of creating a new one.
     """
@@ -111,10 +111,10 @@ class InstanceCreate(APIView):
 
     def post(self, request, pk, format=None):
         assesment = get_object_or_404(Assesment, pk=pk)
-        taker_serializer = TakerSerializer(data=request.data)
-        if not taker_serializer.is_valid():
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-        taker = taker_serializer.save()
+
+        taker = Taker.objects.filter(user=request.user).first()
+        if taker.user.is_superuser or taker.user.is_staff:
+            return Response({"message": "staff or admin users can't take assesments"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         if taker.instance_set.filter(active=True).count() > 0:
             return Response({"message": "taker has active(s) test instance(s)"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -297,7 +297,7 @@ class InstanceResult(APIView):
     """
     From this endpoint you can get an instance result and its taker.
     """
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser | permissions.IsAuthenticated]
     
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
@@ -360,6 +360,39 @@ class TakerDetail(generics.RetrieveAPIView):
     serializer_class = TakerSerializer
     # TODO add a permission to return details of a user
     permission_classes = [permissions.IsAdminUser]
+
+
+class TakerDetailMeAnswer(APIView):
+    """ 
+    From this endpoint you can get your own taker details.
+    The fields you can modify are: "age", "experience_years", "current_position", "mobile_phone", "profile", "genre", "nationality".
+
+    Here is an example:
+    {
+        "age": 25,
+        "experience_years": 10,
+        "current_position": "Dev",
+        "mobile_phone": "1126489293",
+        "profile": "www.linkedin.com",
+        "genre": "m",
+        "nationality": "AR"
+    }
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        taker = Taker.objects.filter(user=request.user).first()
+        taker_serializer = TakerSerializer(taker, context={'request': request})
+        return Response(taker_serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, format=None):
+        taker = Taker.objects.filter(user=request.user).first()
+        taker_serializer = TakerSerializer(taker, data=request.data, context={'request': request})
+        if not taker_serializer.is_valid():
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+        taker_serializer.save()
+        return Response(taker_serializer.data, status=status.HTTP_200_OK)
+
 
 
 class QuestionList(generics.ListAPIView):

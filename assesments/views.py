@@ -12,6 +12,7 @@ from django.utils import timezone
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import api_view, permission_classes
 
+from assesments.permissions import IsInstanceOwner
 from assesments.models import Assesment, Instance, Option, Question, Taker
 from assesments.serializers import (AssesmentSerializer, InstanceSerializer,
                                     OptionSerializer, QuestionSerializer,
@@ -119,8 +120,8 @@ class InstanceCreate(APIView):
         if taker.instance_set.filter(active=True).count() > 0:
             return Response({"message": "taker has active(s) test instance(s)"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        if taker.instance_set.filter(active=False, assesment=assesment).count() > 0:
-            instance = taker.instance_set.filter(active=False, assesment=assesment).first()
+        if taker.instance_set.filter(active=False, finalized=False, assesment=assesment).count() > 0:
+            instance = taker.instance_set.filter(active=False, finalized=False, assesment=assesment).first()
         else:
             instance = Instance(taker=taker, assesment=assesment, start_date=timezone.now(), end_date=timezone.now())
             instance.save()
@@ -137,10 +138,11 @@ class InstanceTest(APIView):
     """
     From this endpoint you can test if an instance is OK to be initiated.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
 
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         instance_serializer = InstanceSerializer(instance, context={'request': request}, fields=('id', 'url', 'active', 'finalized'))
         response_data = {
             "next": reverse('assesments:instance-start', args=[instance.id], request=request, format=format),
@@ -154,10 +156,11 @@ class InstanceStart(APIView):
     From this endpoint you can start an instance, if the instance is not activated.
     If the instance is activated a 405 status is returned.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
     
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         if instance.active:
             return Response({"message": "instance was already activated"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.finalized:
@@ -181,10 +184,11 @@ class InstanceQuestionDetail(APIView):
     - If the instance is inactive a 405 status is returned.
     - If the question id <= 0 or question id > assesments max questions, a 400 status is returned.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
     
     def get(self, request, pk, q_id, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         if not instance.active:
             return Response({"message": "not allowed access questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.finalized:
@@ -227,10 +231,11 @@ class InstanceAnswer(APIView):
     - If the question_id or option_id are not integers a 400 status is returned.
     - If the question_id does not match with assesment or option does not match with question, a 400 status is returned
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
     
     def put(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         if not instance.active:
             return Response({"message": "not allowed answer questions for inactive instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.finalized:
@@ -272,10 +277,11 @@ class InstanceEnd(APIView):
     From this endpoint you can end an instance, if the instance is activated.
     If the instance is not activated a 405 status is returned.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
     
     def post(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         if not instance.active:
             return Response({"message": "only activated instances can be ended"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.finalized:
@@ -297,10 +303,11 @@ class InstanceResult(APIView):
     """
     From this endpoint you can get an instance result and its taker.
     """
-    permission_classes = [permissions.IsAdminUser | permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser | IsInstanceOwner]
     
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
+        self.check_object_permissions(request, instance)
         if not instance.finalized:
             return Response({"message": "not possible to show result for non finalized instance"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if instance.active:
@@ -392,7 +399,6 @@ class TakerDetailMeAnswer(APIView):
             return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
         taker_serializer.save()
         return Response(taker_serializer.data, status=status.HTTP_200_OK)
-
 
 
 class QuestionList(generics.ListAPIView):

@@ -26,15 +26,14 @@ def api_root(request, format=None):
     This is the main entry point for the Assesment app.
     From this endpoint you can explore each resources by clicking in each link below.
     """
-    # TODO check if it is the best way to do that
     # Read taker as api user to don't depend of two models to determine the same
     api_user = Taker.objects.filter(user=request.user).first()
 
     response = {
         'assesments': reverse('assesments:assesment-list', request=request, format=format),
+        'instances': reverse('assesments:instance-list', request=request, format=format)
     }
     if api_user.user.is_superuser or api_user.user.is_staff:
-        response['instances'] = reverse('assesments:instance-list', request=request, format=format)
         response['takers'] = reverse('assesments:taker-list', request=request, format=format)
         response['questions'] = reverse('assesments:question-list', request=request, format=format)
         response['options'] = reverse('assesments:option-list', request=request, format=format)
@@ -81,20 +80,28 @@ class InstanceList(generics.ListAPIView):
     """
     From this endpoint you can get the list of instances created.
     """
-    # TODO add a permission to return instances of a user
-    queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAdminUser | permissions.IsAuthenticated]
+
+    def get_queryset(self) :
+        taker = Taker.objects.filter(user=self.request.user).first()
+        if taker.user.is_superuser or taker.user.is_staff:
+            return Instance.objects.all()
+        return Instance.objects.filter(taker=taker)
 
 
 class InstanceDetail(generics.RetrieveAPIView):
     """
     From this endpoint you can get the details of instances created.
     """
-    # TODO add a permission to return instances of a user
-    queryset = Instance.objects.all()
     serializer_class = InstanceSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAdminUser | permissions.IsAuthenticated]
+
+    def get_queryset(self) :
+        taker = Taker.objects.filter(user=self.request.user).first()
+        if taker.user.is_superuser or taker.user.is_staff:
+            return Instance.objects.all()
+        return Instance.objects.filter(taker=taker)
 
 
 class InstanceCreate(APIView):
@@ -303,7 +310,7 @@ class InstanceResult(APIView):
     """
     From this endpoint you can get an instance result and its taker.
     """
-    permission_classes = [permissions.IsAdminUser | IsInstanceOwner]
+    permission_classes = [permissions.IsAuthenticated, IsInstanceOwner]
     
     def get(self, request, pk, format=None):
         instance = get_object_or_404(Instance, pk=pk)
@@ -322,31 +329,23 @@ class InstanceResult(APIView):
 
 class InstanceRestore(APIView):
     """
-    From this endpoint you can restore an instance details from another browser and get its progress.
-
-    Here is an example for restore an instance based in a taker data:
-        
-    {
-        "first_name": "Guido",
-        "last_name": "Van Rossum",
-        "email": "guido@python.org"
-    }       
+    From this endpoint you can restore an instance in the same step you abandon it.
+    You must be logged, have active and not finalized assesment instance.
 
     Here are some not success possibilities:
-    - If the instance taker data is invalid, a 400 status is returned.
+    - If you are admin or staff you can't restore an instance
     - If the taker has not active instance, a message informing it and 200 status is returned.
     """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None):
-        taker_serializer = TakerSerializer(data=request.data)
-        if not taker_serializer.is_valid():
-            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
-        
-        current_instance = Instance.objects.filter(
-            taker__email=taker_serializer.validated_data['email'], active=True, finalized=False).first()
+        taker = Taker.objects.filter(user=request.user).first()
+        if taker.user.is_superuser or taker.user.is_staff:
+            return Response({"message": "staff or admin users can't restore assesments"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        current_instance = Instance.objects.filter(taker=taker, active=True, finalized=False).first()
         if not current_instance:
-            return Response({"message": "user has not active assesment instances"}, status=status.HTTP_200_OK)
+            return Response({"message": "taker has not active assesment instances"}, status=status.HTTP_200_OK)
 
         instance_serializer = InstanceSerializer(current_instance, context={'request': request}, fields=('url', 'duration', 'end_date', 'assesment', 'taker', 'remaining_seconds'))
         response_data = {
@@ -365,7 +364,6 @@ class TakerList(generics.ListAPIView):
 class TakerDetail(generics.RetrieveAPIView):
     queryset = Taker.objects.all()
     serializer_class = TakerSerializer
-    # TODO add a permission to return details of a user
     permission_classes = [permissions.IsAdminUser]
 
 

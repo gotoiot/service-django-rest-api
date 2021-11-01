@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+from users.serializers import ApiUserDetailSerializer
 from assesments.models import Assesment, Instance, Taker, Question, Option
 
 
@@ -14,7 +15,7 @@ class AssesmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TakerSerializer(serializers.HyperlinkedModelSerializer):
-    # TODO add ApiUser serializer as read only
+    user = ApiUserDetailSerializer()
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
@@ -43,8 +44,7 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Taker
-        # fields = ('url', 'id', 'first_name', 'last_name', 'age', 'experience_years', 'current_position', 'mobile_phone', 'email', 'profile', 'genre', 'nationality',)
-        fields = ('url', 'id', 'age', 'experience_years', 'current_position', 'mobile_phone', 'profile', 'genre', 'nationality',)
+        fields = ('url', 'user', 'id', 'age', 'experience_years', 'current_position', 'mobile_phone', 'profile', 'genre', 'nationality',)
         extra_kwargs = {
             'url': {'view_name': 'assesments:taker-detail', 'lookup_field': 'pk'},
         }
@@ -52,8 +52,7 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
 class InstanceSerializer(serializers.HyperlinkedModelSerializer):
     assesment = AssesmentSerializer()
-    # taker = TakerSerializer(fields=('id', 'first_name', 'last_name', 'email', 'url'))
-    taker = TakerSerializer(fields=('id', 'url'))
+    taker = TakerSerializer(fields=('id', 'url', 'user'))
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)

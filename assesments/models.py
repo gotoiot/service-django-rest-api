@@ -171,7 +171,8 @@ class Taker(models.Model):
         ('US', 'United States'),
     )
     user = models.OneToOneField(get_user_model(), null=True, on_delete=models.CASCADE)
-
+    first_name = models.CharField(max_length=100, default='', blank=True)
+    last_name = models.CharField(max_length=100, default='', blank=True)
     age = models.IntegerField(blank=True, null=True)
     experience_years = models.IntegerField(blank=True, default=0)
     current_position = models.CharField(max_length=200, blank=True, default='')

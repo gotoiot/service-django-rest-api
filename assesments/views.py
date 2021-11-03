@@ -374,6 +374,8 @@ class TakerDetailMeAnswer(APIView):
 
     Here is an example:
     {
+        "first_name": "Cosme",
+        "last_name": "Fulanito",
         "age": 25,
         "experience_years": 10,
         "current_position": "Dev",
@@ -392,7 +394,7 @@ class TakerDetailMeAnswer(APIView):
 
     def put(self, request, format=None):
         taker = Taker.objects.filter(user=request.user).first()
-        taker_serializer = TakerSerializer(taker, data=request.data, context={'request': request})
+        taker_serializer = TakerSerializer(taker, data=request.data, context={'request': request}, partial=True)
         if not taker_serializer.is_valid():
             return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
         taker_serializer.save()

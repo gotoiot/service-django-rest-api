@@ -26,6 +26,8 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
                 self.fields.pop(field_name)
 
     def update(self, instance, validated_data): 
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.age = validated_data.get('age', instance.age)
         instance.experience_years = validated_data.get('experience_years', instance.experience_years)
         instance.current_position = validated_data.get('current_position', instance.current_position)
@@ -38,7 +40,7 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Taker
-        fields = ('url', 'user', 'id', 'age', 'experience_years', 'current_position', 'mobile_phone', 'profile', 'genre', 'nationality',)
+        fields = ('url', 'user', 'first_name', 'last_name', 'id', 'age', 'experience_years', 'current_position', 'mobile_phone', 'profile', 'genre', 'nationality',)
         extra_kwargs = {
             'url': {'view_name': 'assesments:taker-detail', 'lookup_field': 'pk'},
         }

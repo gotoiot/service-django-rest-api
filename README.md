@@ -281,19 +281,18 @@ In this section you can see the pending functionalities of the project and a pos
 
 <details><summary><b>See the complete to-do list</b></summary><br>
 
-* **Assembling the requests with Postman**: Although the challenge requires assembling the requests with Postman, it is more valuable to use the Browsable API and the assited assesment flow navigation than to use Postman.
 * **Run the application with a productive web server**: For the development and demonstration of the application, the Django development web server is used. If you want to implement a productive server, in [this link](https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/uwsgi/), for example, there is information to configure uWSGI.
 * **SSL encryption**: This project is for demonstration purposes, and also uses the development web server provided by Django. If you want to bring this project to a productive environment, SSL should be implemented in the webserver used. For example, in [this link](https://www.youtube.com/watch?v=NhidVhNHfeU) you will find information on how to configure certificates in Nginx. Also, in [this link](https://timonweb.com/django/https-django-development-server-ssl-certificate/) there is a tutorial on how to enable HTTPS using the Django development server.
-* **User authentication**: Currently the API allows any user to see the endpoints of the application, and create new instances. User authentication could be performed using JWT or OAuth. Django, also provides built-in mechanisms for handling user authentication and authorization, but to keep the project as concise as possible, it was decided not to include this feature.
 * **Compress responses**: If a productive web server were used, compression of the responses could be performed. In [this link](https://rtcamp.com/tutorials/nginx/enable-gzip/) there is a tutorial to enable Gzip on an Nginx server.
 * **Support other formats than text**: Although the challenge required that more than one format can be handled for questions and options, in this API they only have one format (CharField). Both plain text and HTML can be stored in this text field. If you wanted to save an image, it could be hosted in an S3 bucket and only save the URL in the field.
 * **Automated testing**: Although having automated testing is a totally necessary feature, it was not implemented for this project. Implementing unit testing is not too complex. If you want to implement it, in [this link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) you will find all the necessary information.
-
-
-* TODO: read about how all-auth rest-auth works together.
-* TODO: get templates for email working ok
-* TODO: get template for password reset OK
-* TOOD: 
+* **TODO**: get templates for email working ok
+* **TODO**: get template for password reset OK
+* **TOOD**: create a home endpoint with main project/apps info
+* **TODO**: describe and document sign up and login flow
+* **TODO**: check that updates over user on admin site does not impact in the EmailAddress table. Capture update signal.
+* **TODO**: make the profile (extension of main user) of assesments works ok
+* **TODO**: add logging to whole application
 
 </details>
 

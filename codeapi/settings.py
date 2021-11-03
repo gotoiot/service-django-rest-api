@@ -71,7 +71,9 @@ ROOT_URLCONF = 'codeapi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -198,6 +200,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'users.serializers.ApiUserLoginSerializer',
     'USER_DETAILS_SERIALIZER': 'users.serializers.ApiUserDetailSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'users.serializers.ApiUserPasswordResetConfirmSerializer',
 }
 
 
@@ -205,8 +208,8 @@ REST_AUTH_SERIALIZERS = {
 # used by simple JWT extension. Read it for more info.
 REST_USE_JWT = True
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.environ.get('ACCESS_TOKEN_LIFETIME', '60'))),
 }
-JWT_AUTH_COOKIE = 'my-app-auth'
-JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+JWT_AUTH_COOKIE = 'codeapi-auth'
+JWT_AUTH_REFRESH_COOKIE = 'codeapi-token'
 

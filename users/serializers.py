@@ -26,4 +26,4 @@ class ApiUserLoginSerializer(LoginSerializer):
 class ApiUserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApiUser
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = ['email']

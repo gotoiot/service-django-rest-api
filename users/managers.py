@@ -36,9 +36,10 @@ class ApiUserManager(BaseUserManager):
         
         user = self.create_user(email, password, **extra_fields)
 
+        # Tries to create an EmailAddress entry when calling createsuperuser command
+        # TODO try to import the model from a settings field in the settings.py
         try:
             from allauth.account.models import EmailAddress
-            print(f"Creating a EmailAddress entry from superuser")
             EmailAddress.objects.create(user=user, email=user.email, verified=True, primary=True)
         except:
             print("Superuser has not been added to EmailAddress all-auth table. Add it manually please!")

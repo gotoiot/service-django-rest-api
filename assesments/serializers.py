@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 
 from users.serializers import ApiUserDetailSerializer
 from assesments.models import Assesment, Instance, Taker, Question, Option
@@ -26,10 +25,6 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
-    def create(self, validated_data):
-        taker = Taker.objects.filter(email=validated_data['email']).first()
-        return taker if taker else Taker.objects.create(**self.validated_data)
-
     def update(self, instance, validated_data): 
         instance.age = validated_data.get('age', instance.age)
         instance.experience_years = validated_data.get('experience_years', instance.experience_years)
@@ -39,7 +34,6 @@ class TakerSerializer(serializers.HyperlinkedModelSerializer):
         instance.genre = validated_data.get('genre', instance.genre)
         instance.nationality = validated_data.get('nationality', instance.nationality)
         instance.save()
-        print(f"Validated data is: {validated_data}")
         return instance
 
     class Meta:

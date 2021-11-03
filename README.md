@@ -1,19 +1,13 @@
-<a href="https://www.correlation-one.com/">
-    <img src="doc/correlation-one-logo.png" alt="logo" title="Correlation One" align="right" width="60" height="60" />
-</a>
+DRF API
+=======
 
-[Read doc in Spanish](README-ES.md)
+This project is a base API developed using [Django REST Framework](https://www.django-rest-framework.org/) that contains user registration, login and logout features, as well as account verification and password reset flow via email.
 
-Code API
-========
+The whole application runs over Docker ecosystem and has a built-in functionality called `"Browsable API"`, which allows you to explore the entire API from a web browser. In this image you can see the main view of the service API.
 
-This project is an API to perform code challenges for Data Science jobs, inspired by the [Correlation One API](https://quiz.correlation-one.com/test/data-scientist).
+![screenshot-browsable-api](doc/screenshot-browsable-api-home.png)
 
-The API is developed in Python with [Django REST Framework](https://www.django-rest-framework.org/) (DRF) that allows creating RESTful APIs in a consistent and scalable way. Likewise, it runs on a Docker container that allows the application to run in the same way in multiple environments. The database used to store the information of the assesments, takers, and questions, is PostgreSQL, also running on a Docker container.
-
-The API has a built-in functionality called "Browsable API", which allows you to explore the entire API from a web browser, and in this image you can see the main view of the assessment API.
-
-![screenshot-browsable-api](doc/screenshot-browsable-api.png)
+This codebase lets you add any custom django application with lot of functionality built-in. In [Applications](#applications) section you can find usage info for each custom installed app.
 
 ## Getting started 🚀
 
@@ -45,17 +39,17 @@ To run the application, you first need to download the database image with the `
 
 When the above processes finish, start the database service with the command `docker-compose up -d db` from the root of the project. With the database running, it is necessary to create the tables that the application needs to work with the command `docker-compose run code-api python manage.py migrate`.
 
-In this project some sample data is included so that you can put the application to work with preloaded information. It is recommended that you import this data to test the application quickly without having to load the test data manually. To load the pre-loaded data, run the following command:
+It is possible to include sample data to test the API as quickly as possible. The sample data is in the `.fixtures` directory. The command needed for load fixture is as follows (in the example, the `assesments.json` fixtures will be loaded):
 
 ```
-docker-compose run code-api python manage.py loaddata .fixtures/db.json
+docker-compose run code-api python manage.py loaddata .fixtures/assesments.json
 ```
 
 ### Run the application
 
-With the initial configurations done, it is time to run the API service with the command `docker-compose up -d code-api` (if you want to run the service interactively, you can remove the -d flag during execution). When the service starts, you can access the `Browsable API` from the browser by entering the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser.
+With the initial configurations done, it is time to run the API service with the command `docker-compose up code-api` (if you want to run the service in background, you can add the -d flag during execution). When the service starts, you can access the `Browsable API` from the browser by entering the [api root endpoint](http://localhost:8000/) in the browser.
 
-If you were able to access the `Browsable API` it means that the application is running correctly.
+If you are able to access the `Browsable API`, it means that the application is running correctly.
 
 </details>
 
@@ -69,26 +63,17 @@ In this section you will find the information to understand and configure the pr
 
 ### Main features
 
-Below you can see the main characteristics of the project:
+Below you can see the main features of the project:
 
-* RESTful API fully explorable through the "Browsable API"
-* API exploration using HyperLinks
-* Assisted navigation for all application flows
-* Assessment instances recovery
+* RESTful API fully explorable through the "Browsable API" and hyperlinks
+* User registration, login, logout, password recovery, account activation
+* User email as a unique source of truth
 * Application administration panel
-* Usage documentation for each endpoint in the "Browsable API"
-* Configurable pagination for all endpoints
-* Info representation in different formats
-* Automatic score calculation
-* Obtaining the remaining assesment time after answer submition
-* Customized for Correlation One Browsable API
-* Prevention that a taker has more than one active assessment
-* Prevention of sending incorrect questions and options
-* Prevention of restarting an active or terminated instance
-* Prevention of obtaining questions from a non-activated instance
-* Prevention of sending answers in a non-activated instance
+* Customized Browsable API for each endpoint
 * Extensive usage documentation
-* Versioning of the assessment API
+* Configurable pagination
+
+The feature related to each application is included in the [Applications](#applications) section.
 
 ### Django Configuration
 
@@ -101,67 +86,82 @@ In the file `codeapi/settings.py` you will find the general configuration of the
 * Django REST Framework specific configuration.
 * Template configuration.
 * Directory configuration for static files.
+* User model selection.
+* User Authentication & Authorization.
 
 For more information on all the possible configurations, you can access the official documentation at [this link](https://docs.djangoproject.com/en/3.2/topics/settings/).
 
 ### Browsable API
 
-Django REST Framework has native functionality that makes the REST API browsable in HTML format. This feature is really an excellent functionality, as it enables you to explore, navigate, and discover the API without having to open any dedicated programs (such as Postman or other clients).
+This application - by using Django REST Framework - has a functionality that makes the REST API browsable in HTML format. This feature is really an excellent functionality, as it enables you to explore, navigate, and discover the API without having to open any dedicated programs (such as Postman or other clients).
 
-From the Browsable API it is possible to create instances of assessments and perform all the necessary steps to complete the flow of an assessment (create, test, start, get questions, send answers, end test, get result).
+From the browsable API you can access to Home Endpoint, and navigate over the user registration, login, logout, password recovery, email confirmation flows. 
 
-### How to use the API
+The usage flow related of each application is included in its [Applications](#applications) section.
 
-The starting point to start using the Browsable API is to access the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser. The application comes with some data loaded so that you can use it in a plug & play way (it is necessary that you have executed the command for loaddata detailed in the initial configuration section).
+### How to use the service API
 
-To perform an `Assessment`, start by creating an` Instance` accessing the URL of a particular assessment, for example [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) with a POST, entering the `first_name, last_name, email` fields, as JSON in the request body.
+The starting point of using the API is accessing its [root](http://localhost:8000) via a client or a browser. From there you can see some useful endpoints related to user registration, login, logout and probably your custom applications endpoints.
 
-Once the assesment is created, just follow the `next` link provided in the response body, which assist you in the whole assesment flow navigation until you finalize it.
+**User Registration, Verification & Login**
 
-The response from the endpoint returns the id and URL of the created instance. With that id you can access the following endpoints:
+The steps described below is for the user registration, email verification and login flow.
 
-* `instances/<uuid: pk> /`: to get the instance details.
-* `instances/<uuid: pk>/test`: to check that the instance is available for testing.
-* `instances/<uuid: pk>/start`: to start an instance, set the start_time, the end_time and the active flag.
-* `instances/<uuid: pk>/questions/<int: q_id>`: in the endpoint to get the details of the instance, in the `assesment-> question_count` field you can get the number of questions of the assesment. Then, you can access each of them, from 1 to question_count. Any value outside of these values ​​will return a 405 Not Allowed code.
-* `instances/<uuid: pk>/answer`: to send the answer about an assessment. Get a question_id and option_id in the request body.
-* `instances/<uuid: pk>/end`, to end an instance, set the end_time, set the active flag to False and calculate the score automatically.
-* `instances/<uuid: pk>/result`: to get the result of a particular instance.
-* `instances/restore`: to recover an instance (if there is one active) of a particular taker.
+1. Access to the [root endpoint](http://localhost:8000) to explore the service endpoints.
+2. Access to the [user registration](http://localhost:8000/auth/registration) endpoint to create a user account. Fill fields with your email and insert twice an strong password.
+3. Verify your account via email accessing to the link shown in the console after registration.
+4. Access to the email verification and insert your email and password. An access tokens are returned. You can save it for your frontend app. If you are using the Browsable API the user will be logged in.
+5. Go to [root endpoint](http://localhost:8000) and explore applications endpoints.
 
-### Create Assesments, Questions, Options and their associations
+**User Logout**
 
-The API service has an integrated administration panel that allows you to perform CRUD operations on each of the application models (tables). In this image you can see how the administration panel looks.
+To logout just follow the [user logout](http://localhost:8000/auth/logout) endpoint and send a POST request.
+
+**User Password Reset**
+
+If you have forgotten you password you can recover it accessing to the [password change endpoint](http://localhost:8000/auth/password/change/). Follow the next steps:
+
+1. Insert your email and send it via POST.
+2. Check your email or the "django console email" to access to the link to password change.
+3. Insert the needed fields. UID is the anteultimate URL slug, and the Token field is the last URL slug (probaby the token slug includes a "-" char). After required fields just type your new password twice and POST it.
+
+**Applications flows**
+
+The specific app endpoints are described in each section of Applications.
+
+### Using the admin site
+
+The API service has an integrated administration panel that allows you to perform CRUD operations on each of registered applications models (tables). In this image you can see how the administration panel looks.
 
 ![screenshot-admin-panel](doc/screenshot-admin-panel.png)
 
-To create different assesments, assign questions and options, it is necessary to enter the administrator panel of the application. If you executed the command `docker-compose run code-api python manage.py loaddata .fixtures/db.json` detailed in the initial configuration section, a superuser with the name` admin` and pass `admin` is automatically created (you can change the password to have greater security).
+To use the admin site you must create a superuser. Execute the command `docker-compose run code-api python manage.py createsuperuser`, enter your email and your password twice and then go to [admin endpoint](http://localhost:8000/admin) to login with your credentials.
 
-To enter the application's administrator panel, enter the URL [http://localhost:8000/admin](http://localhost:8000/admin), and log in with the previously indicated superuser username and password.
+There are many sections included in the admin, like `Accounts`, `Tokens`, `Sites`, `Social Accounts` and `Users`. This applications are included in the base project to provide user auth flows.
 
-From the left panel you can create all the entities that you consider necessary and the relationships between them.
-
-> In case you had not executed the command `docker-compose run code-api python manage.py loaddata .fixtures/db.json`, you can create a super user with the command` docker-compose run code-api python manage.py createsuperuser`, and then loggin in the admin panel with the created user.
+Apart of the base sections, there are the custom applications, explained in the [Applications](#applications) section.
 
 ### Environment Variables
 
 Some environment variables used by the database service, as well as the API service, are defined in the `env` file. Necessary variables can be added/removed. In case you accidentally delete the values or the env file, below you can find some values that work correctly with the application.
 
 ```
-DJANGO_SECRET_KEY = sup3rs3cr3tk3y
-DJANGO_DEBUG = True
-DATABASE_NAME = codeapi
-DATABASE_USER = postgres
-DATABASE_PASS = postgres
-DATABASE_HOST = db
-DATABASE_PORT = 5432
+DJANGO_SECRET_KEY=sup3rs3cr3tk3y
+DJANGO_DEBUG=True
+DATABASE_NAME=codeapi
+DATABASE_USER=postgres
+DATABASE_PASS=postgres
+DATABASE_HOST=db
+DATABASE_PORT=5432
+LOGLEVEL=info
+ACCESS_TOKEN_LIFETIME=120
 ```
 
 It is **HIGHLY RECOMMENDED**that you change these variables if you want to use this application for productive purposes.
 
 ### Database manipulation
 
-Django provides excellent database manipulation without the need to use any external tools to perform the necessary operations.
+Django provides an excellent database manipulation without the need to use any external tools to perform the necessary operations.
 
 If you want to make a simple backup of the database, execute the following command:
 
@@ -190,17 +190,96 @@ And then load data inside the tables:
 docker-compose run code-api python manage.py loaddata .fixtures/db.json
 ```
 
+### Dirs structure
+
+The base structure is as follows:
+
+```sh
+├── .fixtures                       # dir to save DB fixtures to export/import using Django manage.py
+├── users                           # main users app dir
+│   ├── migrations                  # dir to track DB modifications
+│   ├── admin.py                    # register user model into admin interface
+│   ├── apps.py                     # register user app into Django
+│   ├── managers.py                 # classes for serialize/deserialize models instances
+│   ├── models.py                   # user models declaration
+│   ├── serializers.py              # classes for serialize/deserialize models instances
+├── codeapi                         # main Django project
+│   ├── asgi.py                     # utility to load Django app into ASGI servers
+│   ├── settings.py                 # main Django project settings
+│   ├── urls.py                     # main Django project URLs configuration
+│   |── wsgi.py                     # utility to load Django app into WSGI servers
+│   └── views.py                    # main service endpoints (home)
+├── doc                             # dir to save documentation
+│   └── ...
+├── .gitignore                      # exclude files from versions control
+├── .dockerignore                   # exclude files when build a docker image
+├── CHANGELOG.md                    # project changes history and descriptions
+├── Contribuitors.md                # project contribuitors
+├── Dockerfile                      # Dockerfile for Django project
+├── LICENSE                         # licencia del proyecto
+├── README.md                       # este archivo
+├── docker-compose.yml              # configuración de los contenedores de Docker centralizada
+├── env                             # variables de entorno utilizadas en el proyecto
+├── manage.py                       # archivo con utilidades nativas de Django
+└── requirements.txt                # dependencias de Python del proyecto
+```
+
+Custom applications structure are not included.
+
 </details>
 
-## Complementary information 📚
+## Applications 📚
 
-In this section you will find information that will help you to have a greater context.
+In this section you will find information that will help you to have a greater context about each custom applications.
 
-<details><summary><b>Read this info</b></summary>
+<details><summary><b>Read the apps info</b></summary>
 
-### ERD (Entity-Relation Desing)
+### Assesments API
 
-For the entities design and their relationships, the online tool [EDR Plus](https://erdplus.com/standalone) was used, which allows the creation of entities, attributes and relationships in a very simple way. In the following figure you can see the entity-relationship diagram of the system.
+<details><summary><b>See all info related to Assesments APP</b></summary>
+
+#### Features
+
+* Assesments assisted navigation for all flows
+* Assesments instances recovery
+* Assesments error preventions
+* Timed assesments instances
+* Automatic score calculation
+
+#### Browsable API
+
+From the Browsable API it is possible to create instances of assessments and perform all the necessary steps to complete the flow of an assessment (create, test, start, get questions, send answers, end test, get result).
+
+#### How to use the API
+
+The starting point to start using the Browsable API is to access the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser. The application comes with some data loaded so that you can use it in a plug & play way (it is necessary that you have executed the command for loaddata detailed in the initial configuration section).
+
+To perform an `Assessment`, start by creating an` Instance` accessing the URL of a particular assessment, for example [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) with a POST, entering the `first_name, last_name, email` fields, as JSON in the request body.
+
+Once the assesment is created, just follow the `next` link provided in the response body, which assist you in the whole assesment flow navigation until you finalize it.
+
+The response from the endpoint returns the id and URL of the created instance. With that id you can access the following endpoints:
+
+* `instances/<uuid: pk> /`: to get the instance details.
+* `instances/<uuid: pk>/test`: to check that the instance is available for testing.
+* `instances/<uuid: pk>/start`: to start an instance, set the start_time, the end_time and the active flag.
+* `instances/<uuid: pk>/questions/<int: q_id>`: in the endpoint to get the details of the instance, in the `assesment-> question_count` field you can get the number of questions of the assesment. Then, you can access each of them, from 1 to question_count. Any value outside of these values ​​will return a 405 Not Allowed code.
+* `instances/<uuid: pk>/answer`: to send the answer about an assessment. Get a question_id and option_id in the request body.
+* `instances/<uuid: pk>/end`, to end an instance, set the end_time, set the active flag to False and calculate the score automatically.
+* `instances/<uuid: pk>/result`: to get the result of a particular instance.
+* `instances/restore`: to recover an instance (if there is one active) of a particular taker.
+
+#### Using the admin site for the app
+
+At first, it is necessary to create a superuser as described in the [Using the admin site](#using-the-admin-site) and then, login at the [admin endpoint](http://localhost:8000/admin). 
+
+Inside the admin panel you can create different assesments, assign questions and options. From the left panel you can create all the entities that you consider necessary and the relationships between them.
+
+> You can execute the command `docker-compose run code-api python manage.py loaddata .fixtures/assesments.json` to load sample data and use the application quickly.
+
+#### ERD (Entity-Relation Desing)
+
+In the next figure you can see the `Assesments App` entities design and their relationships using the online tool [EDR Plus](https://erdplus.com/standalone).
 
 ![architecture](doc/entity-relation-diagram.png)
 
@@ -208,11 +287,11 @@ An `Assesment` is defined only once, and in addition to its attributes, it has o
 
 In order to carry out an `Assesment` it is necessary for a` Taker` to register with its data, and to create an `Instance` of an` Assesment`. Each `Instance` has, in addition to its attributes, a UUID as an identifier. This allows the instance to be retrieved from another browser based on the Taker data.
 
-### Endpoints
+#### Endpoints
 
 Each endpoint is listed below, with its description and available methods.
 
-* `assesments /` - Shows a list with all the available resources of the application (GET)
+* `assesments/` - Shows a list with all the available resources of the application (GET)
 * `assesments/assesments` - Show a list of all available assesments (GET)
 * `assesments/assesments/<id>` - Show the HOME of a specific test (GET)
 * `assesments/assesments/<id>/status` - Check the status of an assessment and return its status (GET)
@@ -235,43 +314,15 @@ Each endpoint is listed below, with its description and available methods.
 
 Although the information of each endpoint is in the previous list, it is much better to navigate through the `Browsable API` that allows access to more information about each of the endpoints.
 
-### Dirs structure
-
-```sh
-├── .fixtures                       # dir to save DB fixtures to export/import using Django manage.py
-├── assesments (important files)    # main assesments app dir
-│   ├── migrations                  # dir to track DB modifications
-│   ├── admin.py                    # register assesments model into admin interface
-│   ├── models.py                   # assesments models declaration
-│   ├── serializers.py              # classes for serialize/deserialize models instances
-│   ├── urls.py                     # configuration of app routes
-│   └── views.py                    # bussiness logic function and classes
-├── codeapi                         # main Django project
-│   ├── asgi.py                     # utility to load Django app into ASGI servers
-│   ├── settings.py                 # main Django project settings
-│   ├── urls.py                     # main Django project URLs configuration
-│   └── wsgi.py                     # utility to load Django app into WSGI servers
-├── doc                             # dir to save documentation
-│   └── ...
-├── .gitignore                      # exclude files from versions control
-├── .dockerignore                   # exclude files when build a docker image
-├── Contribuitors.md                # project contribuitors
-├── Dockerfile                      # Dockerfile for Django project
-├── LICENSE                         # licencia del proyecto
-├── README.md                       # este archivo
-├── docker-compose.yml              # configuración de los contenedores de Docker centralizada
-├── env                             # variables de entorno utilizadas en el proyecto
-├── manage.py                       # archivo con utilidades nativas de Django
-└── requirements.txt                # dependencias de Python del proyecto
-```
-
-### Correlation-One Requests/Responses
+#### Correlation-One Requests/Responses
 
 To better understand the functionality of the Correlation One API, you can perform an assessment flow by entering [this link](https://quiz.correlation-one.com/test/data-scientist). Likewise, by reviewing network traffic from the browser's development window, analyzing and understanding the information sent and received in each request, you will be able to have a better context about the necessary functionality.
 
 To facilitate access to endpoint information, you can access the file `doc/api-requests-responses.md`, where the requests/responses made against the Correlation One API are stored.
 
 Much of the functionality is inspired by API messages, albeit with a few differences.
+
+</details>
 
 </details>
 
@@ -286,13 +337,13 @@ In this section you can see the pending functionalities of the project and a pos
 * **Compress responses**: If a productive web server were used, compression of the responses could be performed. In [this link](https://rtcamp.com/tutorials/nginx/enable-gzip/) there is a tutorial to enable Gzip on an Nginx server.
 * **Support other formats than text**: Although the challenge required that more than one format can be handled for questions and options, in this API they only have one format (CharField). Both plain text and HTML can be stored in this text field. If you wanted to save an image, it could be hosted in an S3 bucket and only save the URL in the field.
 * **Automated testing**: Although having automated testing is a totally necessary feature, it was not implemented for this project. Implementing unit testing is not too complex. If you want to implement it, in [this link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) you will find all the necessary information.
-* **TOOD**: create a home endpoint with main project/apps info
-* **TODO**: describe and document sign up and login flow
 * **TODO**: check that updates over user on admin site does not impact in the EmailAddress table. Capture update signal.
 * **TODO**: add logging to whole application
-* **TODO**: adds redirection when user is unauthenticated or unauthorizez.
-
-
+* **TODO**: rename the whole project to drf-base-api
+* **TODO**: update each "code-api" reference to new project name
+* **TODO**: change home screenshot for one without assesments
+* **TODO**: makes the password reset feature works again
+* **TODO**: put the assesments app info (like doc or any other) into dedicated dirs
 
 </details>
 

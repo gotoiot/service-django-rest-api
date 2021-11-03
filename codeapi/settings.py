@@ -18,7 +18,6 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -147,6 +146,10 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# This backend prints email to console instead of use SMTP client
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -156,26 +159,24 @@ REST_FRAMEWORK = {
     )
 }
 
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'my-app-auth'
-JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
-
-
-# Custom user model
-AUTH_USER_MODEL = 'users.ApiUser'
-
+# Backend for authentication functionality
+# Allauth specific authentication methods, such as login by e-mail
+# Django contrib needed to login by username in Django admin, regardless of allauth
 AUTHENTICATION_BACKENDS = [
-    # allauth specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
-    # Needed to login by username in Django admin, regardless of allauth
     'django.contrib.auth.backends.ModelBackend',
 ]
 
 
-# LOGIN_URL = 'http://localhost:8000/auth/login'
+# Use this models as auth user instead of default one
+AUTH_USER_MODEL = 'users.ApiUser'
+# TODO find a way to determine which is the ApiUser Model Serializer
 
-
-# TODO: Comment meaning of each setting or group
+# This group of settings corresponds to configuration for allauth
+# Basically the settings are for replace default username auth of
+# Django for auth by email. With these configs, allauth will send
+# an email to the registered user to activate its account, and after 
+# that, the user can login in the app to use it.
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
@@ -188,6 +189,8 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/auth/login'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/auth/login'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
+
+# Rest auth functionality is based on allauth features
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.ApiUserRegistrationSerializer',
 }
@@ -198,8 +201,12 @@ REST_AUTH_SERIALIZERS = {
 }
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+# Configurations for JSON Web Tokens. The functionality of JWT is
+# used by simple JWT extension. Read it for more info.
+REST_USE_JWT = True
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
 }
+JWT_AUTH_COOKIE = 'my-app-auth'
+JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+

@@ -234,6 +234,8 @@ In this section you will find information that will help you to have a greater c
 
 ### Assesments API
 
+The Assesments API has needed functionality to permorm assesments and create its questions, options, and their relations.
+
 <details><summary><b>See all info related to Assesments APP</b></summary>
 
 #### Assesments Features
@@ -279,7 +281,7 @@ The response from the endpoint returns the id and URL of the created instance. W
 
 In the next figure you can see the `Assesments App` entities design and their relationships using the online tool [EDR Plus](https://erdplus.com/standalone).
 
-![architecture](doc/entity-relation-diagram.png)
+![architecture](doc/assesments/edr-figure.png)
 
 An `Assesment` is defined only once, and in addition to its attributes, it has one or more` Questions` associated with it. In turn, each `Questions` has one or more` Options` associated with it.
 
@@ -319,7 +321,7 @@ Although the information of each endpoint is in the previous list, it is much be
 
 To better understand the functionality of the Correlation One API, you can perform an assessment flow by entering [this link](https://quiz.correlation-one.com/test/data-scientist). Likewise, by reviewing network traffic from the browser's development window, analyzing and understanding the information sent and received in each request, you will be able to have a better context about the necessary functionality.
 
-To facilitate access to endpoint information, you can access the file `doc/api-requests-responses.md`, where the requests/responses made against the Correlation One API are stored.
+To facilitate access to endpoint information, you can access the file `doc/assesments/c1-requests-responses.md`, where the requests/responses made against the Correlation One API are stored.
 
 Much of the functionality is inspired by API messages, albeit with a few differences.
 
@@ -345,6 +347,7 @@ In this section you can see the pending functionalities of the project and a pos
 * **TODO**: change home screenshot for one without assesments
 * **TODO**: makes the password reset feature works again
 * **TODO**: put the assesments app info (like doc or any other) into dedicated dirs
+* **TODO**: move permissions to dedicated folder instead of using it into each app
 
 </details>
 

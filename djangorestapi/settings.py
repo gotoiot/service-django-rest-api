@@ -200,7 +200,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'users.serializers.ApiUserLoginSerializer',
     'USER_DETAILS_SERIALIZER': 'users.serializers.ApiUserDetailSerializer',
-    # 'PASSWORD_RESET_CONFIRM_SERIALIZER': 'users.serializers.ApiUserPasswordResetConfirmSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'users.serializers.ApiUserPasswordResetConfirmSerializer',
 }
 
 

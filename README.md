@@ -342,10 +342,7 @@ In this section you can see the pending functionalities of the project and a pos
 * **Automated testing**: Although having automated testing is a totally necessary feature, it was not implemented for this project. Implementing unit testing is not too complex. If you want to implement it, in [this link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) you will find all the necessary information.
 * **TODO**: check that updates over user on admin site does not impact in the EmailAddress table. Capture update signal.
 * **TODO**: add logging to whole application
-* **TODO**: rename the whole project to drf-base-api
-* **TODO**: update each "django-rest-api" reference to new project name
 * **TODO**: change home screenshot for one without assesments
-* **TODO**: makes the password reset feature works again
 * **TODO**: move permissions to dedicated folder instead of using it into each app
 
 </details>

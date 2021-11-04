@@ -20,7 +20,7 @@ def app_home(request, format=None):
         'assesments_list': reverse('assesments:assesment-list', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
         'logout': reverse('rest_logout', request=request, format=format),
-        'password_change': reverse('rest_password_change', request=request, format=format),
+        'password_reset': reverse('rest_password_reset', request=request, format=format),
         'register': reverse('rest_register', request=request, format=format),
     }
     return Response(response, status=status.HTTP_200_OK)

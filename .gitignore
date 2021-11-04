@@ -2,3 +2,5 @@
 data/db
 db.sqlite3
 .env
+.db*
+.database*

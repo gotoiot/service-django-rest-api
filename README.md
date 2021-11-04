@@ -1,7 +1,13 @@
-DRF API
-=======
+<a href="https://www.gotoiot.com/">
+    <img src="doc/gotoiot-logo.png" alt="logo" title="Goto IoT" align="right" width="60" height="60" />
+</a>
 
-This project is a base API developed using [Django REST Framework](https://www.django-rest-framework.org/) that contains user registration, login and logout features, as well as account verification and password reset flow via email.
+Django REST API
+===============
+
+*It will really helps if you give to this project an star ⭐ in Github!*
+
+This project is an API developed using [Django REST Framework](https://www.django-rest-framework.org/) that contains user registration, login and logout features, as well as account verification and password reset flow via email.
 
 The whole application runs over Docker ecosystem and has a built-in functionality called `"Browsable API"`, which allows you to explore the entire API from a web browser. In this image you can see the main view of the service API.
 
@@ -25,13 +31,13 @@ Continue with downloading the code when you have the dependencies installed and 
 
 ### Download the code
 
-To download the code, the best thing to do is to `fork` this project to your personal account by clicking on [this link](https://github.com/agustinBassi/django-rest-api/fork). Once you have the fork to your account, download it from the terminal with this command (remember to put your username in the link):
+To download the code, the best thing to do is to `fork` this project to your personal account by clicking on [this link](https://github.com/gotoiot/service-django-rest-api/fork). Once you have the fork to your account, download it from the terminal with this command (remember to put your username in the link):
 
 ```
 git clone https://github.com/USER/django-rest-api.git
 ```
 
-> In case you don't have a Github account, or you don't want to fork, you can directly clone this repo with the command `git clone https://github.com/agustinBassi/django-rest-api.git`.
+> In case you don't have a Github account, or you don't want to fork, you can directly clone this repo with the command `git clone https://github.com/gotoiot/service-django-rest-api.git`.
 
 ### Initial project configuration
 
@@ -338,12 +344,10 @@ In this section you can see the pending functionalities of the project and a pos
 * **Run the application with a productive web server**: For the development and demonstration of the application, the Django development web server is used. If you want to implement a productive server, in [this link](https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/uwsgi/), for example, there is information to configure uWSGI.
 * **SSL encryption**: This project is for demonstration purposes, and also uses the development web server provided by Django. If you want to bring this project to a productive environment, SSL should be implemented in the webserver used. For example, in [this link](https://www.youtube.com/watch?v=NhidVhNHfeU) you will find information on how to configure certificates in Nginx. Also, in [this link](https://timonweb.com/django/https-django-development-server-ssl-certificate/) there is a tutorial on how to enable HTTPS using the Django development server.
 * **Compress responses**: If a productive web server were used, compression of the responses could be performed. In [this link](https://rtcamp.com/tutorials/nginx/enable-gzip/) there is a tutorial to enable Gzip on an Nginx server.
-* **Support other formats than text**: Although the challenge required that more than one format can be handled for questions and options, in this API they only have one format (CharField). Both plain text and HTML can be stored in this text field. If you wanted to save an image, it could be hosted in an S3 bucket and only save the URL in the field.
+* **Support other formats than text in DB**: In this API they only supported format is text based. If you wanted to save an image or other file, it could be hosted in an S3 bucket and only save the URL in the field.
 * **Automated testing**: Although having automated testing is a totally necessary feature, it was not implemented for this project. Implementing unit testing is not too complex. If you want to implement it, in [this link](https://docs.djangoproject.com/en/3.2/topics/testing/overview/) you will find all the necessary information.
-* **TODO**: check that updates over user on admin site does not impact in the EmailAddress table. Capture update signal.
-* **TODO**: add logging to whole application
-* **TODO**: change home screenshot for one without assesments
-* **TODO**: move permissions to dedicated folder instead of using it into each app
+* **Capture update signals for ApiUsers**: At this moment, if you update some user data from de admin site, it doesn't impact in the EmailAddress table, which is used for whole user authentication. The update signal must be catched and perform the EmailAddress update as well.
+* **Add logging**: at this momment, the service doesn't have logging features, but it could be a really good idea to include it.
 
 </details>
 
@@ -365,13 +369,25 @@ In this section you can see the most important technologies used.
 
 ## Contribute 🖇️
 
-If you are interested in the project and would like to join muscles so that it continues to grow and improve, you can open a discussion thread to discuss your proposals at [this link](https://github.com/agustinBassi/django-rest-api/issues/new). You can also read the file [Contribute.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) where the steps are well explained so that you can send pull requests.
+If you are interested in the project and would like to join muscles so that it continues to grow and improve, you can open a discussion thread to discuss your proposals at [this link](https://github.com/gotoiot/service-django-rest-api/issues/new). You can also read the file [Contribute.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) where the steps are well explained so that you can send pull requests.
+
+## About Goto IoT 📖
+
+Goto IoT is a platform that publishes well-documented open source material and projects, together with a free community that collaborates and promotes knowledge about IoT and programming among its members. Here you can see the most important links:
+
+* **[Website](https://www.gotoiot.com/):** Where articles and projects on IoT are published.
+* **[Goto IoT Github:](https://github.com/gotoiot)** Where the projects are hosted to download and use.
+* **[Goto IoT Community:](https://groups.google.com/g/gotoiot)** Where community members exchange information and ideas, make inquiries, solve problems and share news.
+* **[Goto IoT Twitter:](https://twitter.com/gotoiot)** Where the news of the site and topics related to IoT are published.
+* **[Goto IoT Wiki:](https://github.com/gotoiot/doc/wiki)** Where there is supplemental development information to broaden the context.
 
 ## Tokens of appreciation 🎁
 
-If you liked this project and would like to support it, any of these actions would be more than fine for me:
+If you liked this project and would like to support it, any of these actions would be great for us:
 
 * Support this project with a ⭐ on Github to reach more people.
+* Join [our open community](https://groups.google.com/g/gotoiot)  and leave a feedback on what you think of the project.
+* [Follow us on twitter](https://twitter.com/gotoiot) and leave a comment or like.
 * Share this project with other people.
 
 ## Authors 👥
@@ -380,8 +396,12 @@ The main collaborations were made by:
 
 * **[Agustin Bassi](https://github.com/agustinBassi)**: Ideation, start-up and maintenance of the project.
 
-You can also look at all the people who have participated in the [full list of contributors](https://github.com/agustinBassi/django-rest-api/contributors).
+You can also look at all the people who have participated in the [full list of contributors](https://github.com/gotoiot/service-django-rest-api/contributors).
 
 ## License 📄
 
 This project is under ([MIT](https://choosealicense.com/licenses/mit/)) License. You can see the file [LICENSE.md](LICENSE.md) for more details on the use of this material.
+
+---
+
+**Copyright © Goto IoT 2021** - [**Website**](https://www.gotoiot.com) - [**Group**](https://groups.google.com/g/gotoiot) - [**Github**](https://www.github.com/gotoiot) - [**Twitter**](https://www.twitter.com/gotoiot) - [**Wiki**](https://github.com/gotoiot/doc/wiki)

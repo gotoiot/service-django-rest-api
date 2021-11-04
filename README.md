@@ -25,29 +25,29 @@ Continue with downloading the code when you have the dependencies installed and 
 
 ### Download the code
 
-To download the code, the best thing to do is to `fork` this project to your personal account by clicking on [this link](https://github.com/agustinBassi/code-api/fork). Once you have the fork to your account, download it from the terminal with this command (remember to put your username in the link):
+To download the code, the best thing to do is to `fork` this project to your personal account by clicking on [this link](https://github.com/agustinBassi/django-rest-api/fork). Once you have the fork to your account, download it from the terminal with this command (remember to put your username in the link):
 
 ```
-git clone https://github.com/USER/code-api.git
+git clone https://github.com/USER/django-rest-api.git
 ```
 
-> In case you don't have a Github account, or you don't want to fork, you can directly clone this repo with the command `git clone https://github.com/agustinBassi/code-api.git`.
+> In case you don't have a Github account, or you don't want to fork, you can directly clone this repo with the command `git clone https://github.com/agustinBassi/django-rest-api.git`.
 
 ### Initial project configuration
 
-To run the application, you first need to download the database image with the `docker-compose pull db` command. Next, you need to compile the REST API service with the `docker-compose build code-api` command (it may take a few minutes).
+To run the application, you first need to download the database image with the `docker-compose pull db` command. Next, you need to compile the REST API service with the `docker-compose build django-rest-api` command (it may take a few minutes).
 
-When the above processes finish, start the database service with the command `docker-compose up -d db` from the root of the project. With the database running, it is necessary to create the tables that the application needs to work with the command `docker-compose run code-api python manage.py migrate`.
+When the above processes finish, start the database service with the command `docker-compose up -d db` from the root of the project. With the database running, it is necessary to create the tables that the application needs to work with the command `docker-compose run django-rest-api python manage.py migrate`.
 
 It is possible to include sample data to test the API as quickly as possible. The sample data is in the `.fixtures` directory. The command needed for load fixture is as follows (in the example, the `assesments.json` fixtures will be loaded):
 
 ```
-docker-compose run code-api python manage.py loaddata .fixtures/assesments.json
+docker-compose run django-rest-api python manage.py loaddata .fixtures/assesments.json
 ```
 
 ### Run the application
 
-With the initial configurations done, it is time to run the API service with the command `docker-compose up code-api` (if you want to run the service in background, you can add the -d flag during execution). When the service starts, you can access the `Browsable API` from the browser by entering the [api root endpoint](http://localhost:8000/) in the browser.
+With the initial configurations done, it is time to run the API service with the command `docker-compose up django-rest-api` (if you want to run the service in background, you can add the -d flag during execution). When the service starts, you can access the `Browsable API` from the browser by entering the [api root endpoint](http://localhost:8000/) in the browser.
 
 If you are able to access the `Browsable API`, it means that the application is running correctly.
 
@@ -77,7 +77,7 @@ The feature related to each application is included in the [Applications](#appli
 
 ### Django Configuration
 
-In the file `codeapi/settings.py` you will find the general configuration of the Django project. Within this file, all kinds of Django configurations can be made, in which the following stand out:
+In the file `djangorestapi/settings.py` you will find the general configuration of the Django project. Within this file, all kinds of Django configurations can be made, in which the following stand out:
 
 * Selection and configuration of the database engine.
 * Applications installed within the project.
@@ -133,7 +133,7 @@ The API service has an integrated administration panel that allows you to perfor
 
 ![screenshot-admin-panel](doc/screenshot-admin-panel.png)
 
-To use the admin site you must create a superuser before. Execute the command `docker-compose run code-api python manage.py createsuperuser`, enter your email and your password twice and then go to [admin endpoint](http://localhost:8000/admin) to login with your credentials.
+To use the admin site you must create a superuser before. Execute the command `docker-compose run django-rest-api python manage.py createsuperuser`, enter your email and your password twice and then go to [admin endpoint](http://localhost:8000/admin) to login with your credentials.
 
 There are many sections included in the admin, like `Accounts`, `Tokens`, `Sites`, `Social Accounts` and `Users`. This applications are included in the base project to provide user auth flows.
 
@@ -146,7 +146,7 @@ Some environment variables used by the database service, as well as the API serv
 ```
 DJANGO_SECRET_KEY=sup3rs3cr3tk3y
 DJANGO_DEBUG=True
-DATABASE_NAME=codeapi
+DATABASE_NAME=codedb
 DATABASE_USER=postgres
 DATABASE_PASS=postgres
 DATABASE_HOST=db
@@ -164,14 +164,14 @@ Django provides an excellent database manipulation without the need to use any e
 If you want to make a simple backup of the database, execute the following command:
 
 ```
-docker-compose run code-api \
+docker-compose run django-rest-api \
 python manage.py dumpdata --indent 2 > .fixtures/db.json
 ```
 
 If you want to make a backup of the database that can be used in a fresh database, execute the following command:
 
 ```
-docker-compose run code-api \
+docker-compose run django-rest-api \
 python manage.py dumpdata --indent 2 \
 --exclude auth.permission --exclude contenttypes --exclude admin.logentry > .fixtures/db.json
 ```
@@ -179,13 +179,13 @@ python manage.py dumpdata --indent 2 \
 To load the application data into a fresh database, run the following command to create the necessary tables:
 
 ```
-docker-compose run code-api python manage.py migrate
+docker-compose run django-rest-api python manage.py migrate
 ```
 
 And then load data inside the tables:
 
 ```
-docker-compose run code-api python manage.py loaddata .fixtures/db.json
+docker-compose run django-rest-api python manage.py loaddata .fixtures/db.json
 ```
 
 ### Dirs structure
@@ -201,7 +201,7 @@ The base structure is as follows:
 │   ├── managers.py                 # classes for serialize/deserialize models instances
 │   ├── models.py                   # user models declaration
 │   ├── serializers.py              # classes for serialize/deserialize models instances
-├── codeapi                         # main Django project
+├── djangorestapi                         # main Django project
 │   ├── asgi.py                     # utility to load Django app into ASGI servers
 │   ├── settings.py                 # main Django project settings
 │   ├── urls.py                     # main Django project URLs configuration
@@ -248,7 +248,7 @@ The Assesments API has needed functionality to permorm assesments and create its
 
 #### Assesments sample data
 
-The application comes with sample data at `.fixtures/assesments.json`. To load this data you have to execute the command `docker-compose run code-api python manage.py migrate` and then, execute the command `docker-compose run code-api python manage.py loaddata .fixtures/assesments.json` as explained in the [Getting Started](#getting-started) section.
+The application comes with sample data at `.fixtures/assesments.json`. To load this data you have to execute the command `docker-compose run django-rest-api python manage.py migrate` and then, execute the command `docker-compose run django-rest-api python manage.py loaddata .fixtures/assesments.json` as explained in the [Getting Started](#getting-started) section.
 
 #### Using the Assesments admin site
 
@@ -343,10 +343,9 @@ In this section you can see the pending functionalities of the project and a pos
 * **TODO**: check that updates over user on admin site does not impact in the EmailAddress table. Capture update signal.
 * **TODO**: add logging to whole application
 * **TODO**: rename the whole project to drf-base-api
-* **TODO**: update each "code-api" reference to new project name
+* **TODO**: update each "django-rest-api" reference to new project name
 * **TODO**: change home screenshot for one without assesments
 * **TODO**: makes the password reset feature works again
-* **TODO**: put the assesments app info (like doc or any other) into dedicated dirs
 * **TODO**: move permissions to dedicated folder instead of using it into each app
 
 </details>
@@ -369,7 +368,7 @@ In this section you can see the most important technologies used.
 
 ## Contribute 🖇️
 
-If you are interested in the project and would like to join muscles so that it continues to grow and improve, you can open a discussion thread to discuss your proposals at [this link](https://github.com/agustinBassi/code-api/issues/new). You can also read the file [Contribute.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) where the steps are well explained so that you can send pull requests.
+If you are interested in the project and would like to join muscles so that it continues to grow and improve, you can open a discussion thread to discuss your proposals at [this link](https://github.com/agustinBassi/django-rest-api/issues/new). You can also read the file [Contribute.md](https://github.com/gotoiot/gotoiot-doc/wiki/Contribuir) where the steps are well explained so that you can send pull requests.
 
 ## Tokens of appreciation 🎁
 
@@ -384,7 +383,7 @@ The main collaborations were made by:
 
 * **[Agustin Bassi](https://github.com/agustinBassi)**: Ideation, start-up and maintenance of the project.
 
-You can also look at all the people who have participated in the [full list of contributors](https://github.com/agustinBassi/code-api/contributors).
+You can also look at all the people who have participated in the [full list of contributors](https://github.com/agustinBassi/django-rest-api/contributors).
 
 ## License 📄
 

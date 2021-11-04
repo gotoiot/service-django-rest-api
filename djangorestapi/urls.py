@@ -1,4 +1,4 @@
-"""codeapi URL Configuration
+"""djangorestapi URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -19,7 +19,7 @@ from django.urls import path, include
 from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView
 from dj_rest_auth.views import PasswordResetConfirmView
 
-from codeapi.views import app_home
+from djangorestapi.views import app_home
 
 
 urlpatterns = [

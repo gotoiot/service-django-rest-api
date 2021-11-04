@@ -95,7 +95,7 @@ For more information on all the possible configurations, you can access the offi
 
 This application - by using Django REST Framework - has a functionality that makes the REST API browsable in HTML format. This feature is really an excellent functionality, as it enables you to explore, navigate, and discover the API without having to open any dedicated programs (such as Postman or other clients).
 
-From the browsable API you can access to Home Endpoint, and navigate over the user registration, login, logout, password recovery, email confirmation flows. 
+From the browsable API you can access to Home Endpoint, and navigate over the user registration, login, logout, password recovery and email confirmation flows. 
 
 The usage flow related of each application is included in its [Applications](#applications) section.
 
@@ -105,12 +105,10 @@ The starting point of using the API is accessing its [root](http://localhost:800
 
 **User Registration, Verification & Login**
 
-The steps described below is for the user registration, email verification and login flow.
-
 1. Access to the [root endpoint](http://localhost:8000) to explore the service endpoints.
-2. Access to the [user registration](http://localhost:8000/auth/registration) endpoint to create a user account. Fill fields with your email and insert twice an strong password.
+2. Access to the [user registration](http://localhost:8000/auth/registration) endpoint to create an user account. Fill fields with your email and insert twice an strong password.
 3. Verify your account via email accessing to the link shown in the console after registration.
-4. Access to the email verification and insert your email and password. An access tokens are returned. You can save it for your frontend app. If you are using the Browsable API the user will be logged in.
+4. Access to the email verification and insert your email and password. An access tokens will be returned. You can save it for your mobile/web/desktop app. If you are using the Browsable API the user will be logged in.
 5. Go to [root endpoint](http://localhost:8000) and explore applications endpoints.
 
 **User Logout**
@@ -119,15 +117,15 @@ To logout just follow the [user logout](http://localhost:8000/auth/logout) endpo
 
 **User Password Reset**
 
-If you have forgotten you password you can recover it accessing to the [password change endpoint](http://localhost:8000/auth/password/change/). Follow the next steps:
+If you have forgotten your password, you can recover it accessing to the [password change endpoint](http://localhost:8000/auth/password/change/). Follow the next steps:
 
 1. Insert your email and send it via POST.
 2. Check your email or the "django console email" to access to the link to password change.
-3. Insert the needed fields. UID is the anteultimate URL slug, and the Token field is the last URL slug (probaby the token slug includes a "-" char). After required fields just type your new password twice and POST it.
+3. Insert the needed fields. `UID` is the anteultimate URL slug, and the `Token` field is the last URL slug (probaby the token slug includes a "-" char). After required fields just type your new password twice and POST it.
 
 **Applications flows**
 
-The specific app endpoints are described in each section of Applications.
+The specific app endpoints are described in each section of [Applications](#applications).
 
 ### Using the admin site
 
@@ -135,7 +133,7 @@ The API service has an integrated administration panel that allows you to perfor
 
 ![screenshot-admin-panel](doc/screenshot-admin-panel.png)
 
-To use the admin site you must create a superuser. Execute the command `docker-compose run code-api python manage.py createsuperuser`, enter your email and your password twice and then go to [admin endpoint](http://localhost:8000/admin) to login with your credentials.
+To use the admin site you must create a superuser before. Execute the command `docker-compose run code-api python manage.py createsuperuser`, enter your email and your password twice and then go to [admin endpoint](http://localhost:8000/admin) to login with your credentials.
 
 There are many sections included in the admin, like `Accounts`, `Tokens`, `Sites`, `Social Accounts` and `Users`. This applications are included in the base project to provide user auth flows.
 
@@ -238,7 +236,7 @@ In this section you will find information that will help you to have a greater c
 
 <details><summary><b>See all info related to Assesments APP</b></summary>
 
-#### Features
+#### Assesments Features
 
 * Assesments assisted navigation for all flows
 * Assesments instances recovery
@@ -246,36 +244,36 @@ In this section you will find information that will help you to have a greater c
 * Timed assesments instances
 * Automatic score calculation
 
-#### Browsable API
+#### Assesments sample data
 
-From the Browsable API it is possible to create instances of assessments and perform all the necessary steps to complete the flow of an assessment (create, test, start, get questions, send answers, end test, get result).
+The application comes with sample data at `.fixtures/assesments.json`. To load this data you have to execute the command `docker-compose run code-api python manage.py migrate` and then, execute the command `docker-compose run code-api python manage.py loaddata .fixtures/assesments.json` as explained in the [Getting Started](#getting-started) section.
 
-#### How to use the API
-
-The starting point to start using the Browsable API is to access the URL [http://localhost:8000/v1/assesments](http://localhost:8000/v1/assesments) in the browser. The application comes with some data loaded so that you can use it in a plug & play way (it is necessary that you have executed the command for loaddata detailed in the initial configuration section).
-
-To perform an `Assessment`, start by creating an` Instance` accessing the URL of a particular assessment, for example [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) with a POST, entering the `first_name, last_name, email` fields, as JSON in the request body.
-
-Once the assesment is created, just follow the `next` link provided in the response body, which assist you in the whole assesment flow navigation until you finalize it.
-
-The response from the endpoint returns the id and URL of the created instance. With that id you can access the following endpoints:
-
-* `instances/<uuid: pk> /`: to get the instance details.
-* `instances/<uuid: pk>/test`: to check that the instance is available for testing.
-* `instances/<uuid: pk>/start`: to start an instance, set the start_time, the end_time and the active flag.
-* `instances/<uuid: pk>/questions/<int: q_id>`: in the endpoint to get the details of the instance, in the `assesment-> question_count` field you can get the number of questions of the assesment. Then, you can access each of them, from 1 to question_count. Any value outside of these values ​​will return a 405 Not Allowed code.
-* `instances/<uuid: pk>/answer`: to send the answer about an assessment. Get a question_id and option_id in the request body.
-* `instances/<uuid: pk>/end`, to end an instance, set the end_time, set the active flag to False and calculate the score automatically.
-* `instances/<uuid: pk>/result`: to get the result of a particular instance.
-* `instances/restore`: to recover an instance (if there is one active) of a particular taker.
-
-#### Using the admin site for the app
+#### Using the Assesments admin site
 
 At first, it is necessary to create a superuser as described in the [Using the admin site](#using-the-admin-site) and then, login at the [admin endpoint](http://localhost:8000/admin). 
 
 Inside the admin panel you can create different assesments, assign questions and options. From the left panel you can create all the entities that you consider necessary and the relationships between them.
 
-> You can execute the command `docker-compose run code-api python manage.py loaddata .fixtures/assesments.json` to load sample data and use the application quickly.
+#### How to use the Assesments API
+
+The starting point to use the application's API is to create a user and validate it as explained in the [How to use the service API](#How-to-use-the-service-API). Optionally you can load sample data as described above or load your data manually from the admin site.
+
+Once logged in and having some data to play, access to the URL [Assesments Home](http://localhost:8000/v1/assesments) to see different options. 
+
+To perform an `Assessment`, start by creating an` Instance` accessing the URL of a particular assessment, for example [http://localhost:8000/v1/assesments/assesments/1/create](http://localhost:8000/v1/assesments/assesments/1/create) with a POST. 
+
+Once the assesment is created, just follow the `next` link provided in the response body, which assist you in the whole assesment flow navigation until you finalize it.
+
+The response from the endpoint returns the id and URL of the created instance. With that id you can access the following endpoints:
+
+* `instances/<uuid:pk> /`: to get the instance details.
+* `instances/<uuid:pk>/test`: to check that the instance is available for testing.
+* `instances/<uuid:pk>/start`: to start an instance, set the start_time, the end_time and the active flag.
+* `instances/<uuid:pk>/questions/<int:q_id>`: in the endpoint to get the details of the instance, in the `assesment-> question_count` field you can get the number of questions of the assesment. Then, you can access each of them, from 1 to question_count. Any value outside of these values ​​will return a 405 Not Allowed code.
+* `instances/<uuid:pk>/answer`: to send the answer about an assessment. Get a question_id and option_id in the request body.
+* `instances/<uuid:pk>/end`, to end an instance, set the end_time, set the active flag to False and calculate the score automatically.
+* `instances/<uuid:pk>/result`: to get the result of a particular instance.
+* `instances/restore`: to recover an instance (if there is one active) of a particular taker.
 
 #### ERD (Entity-Relation Desing)
 
@@ -296,7 +294,7 @@ Each endpoint is listed below, with its description and available methods.
 * `assesments/assesments/<id>` - Show the HOME of a specific test (GET)
 * `assesments/assesments/<id>/status` - Check the status of an assessment and return its status (GET)
 * `assesments/assesments/<id>/create` - Creates a new instance of an assesment and returns the UUID of the instance (POST)
-* `assesments/instances` - List all available instances (GET)
+* `assesments/instances` - List all available instances (GET) (*)
 * `assesments/instances/<id>` - Show the details of the instance (GET)
 * `assesments/instances/<id>/test` - Check that the instance is active (GET)
 * `assesments/instances/<id>/start` - Starts the test and starts the countdown (POST)
@@ -305,14 +303,17 @@ Each endpoint is listed below, with its description and available methods.
 * `assesments/instances/<id>/end` - End an instance (POST)
 * `assesments/instances/<id>/result` - Show the result of an instance (GET)
 * `assesments/instances/restore` - Allows you to retrieve an instance based on user data (POST)
-* `assesments/takers` - Show a list with all the test takers that performed assesments (GET)
-* `assesments/takers/<id>` - Show the detail of a specific taker (GET)
-* `assesments/questions` - List all available questions (GET)
-* `assesments/questions/<id>` - Show the detail of a specific question (GET)
-* `assesments/options` - List all available options (GET)
-* `assesments/options/<id>` - Show the detail of a specific option (GET)
+* `assesments/takers` - Show a list with all the test takers that performed assesments (GET) (*)
+* `assesments/takers/<id>` - Show the detail of a specific taker (GET) (*)
+* `assesments/takers/me` - Show the detail of a logged in taker (GET & PUT)
+* `assesments/questions` - List all available questions (GET) (*)
+* `assesments/questions/<id>` - Show the detail of a specific question (GET) (*)
+* `assesments/options` - List all available options (GET) (*)
+* `assesments/options/<id>` - Show the detail of a specific option (GET) (*)
 
 Although the information of each endpoint is in the previous list, it is much better to navigate through the `Browsable API` that allows access to more information about each of the endpoints.
+
+> Endpoints with (*) can only be accessed using staff or super user acccount.
 
 #### Correlation-One Requests/Responses
 

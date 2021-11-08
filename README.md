@@ -147,7 +147,7 @@ Apart of the base sections, there are the custom applications, explained in the 
 
 ### Environment Variables
 
-Some environment variables used by the database service, as well as the API service, are defined in the `env` file. Necessary variables can be added/removed. In case you accidentally delete the values or the env file, below you can find some values that work correctly with the application.
+Some environment variables used by the database service, as well as the API service, must be defined in the `.env` file. This file won't be tracked by version control tool and **MUST BE INCLUDED in the `.gitignore`** file. Necessary variables can be added/removed. Here you have a template which works fine with the project. Create a file called `.env` and add this content:
 
 ```
 DJANGO_SECRET_KEY=sup3rs3cr3tk3y
@@ -229,6 +229,20 @@ The base structure is as follows:
 ```
 
 Custom applications structure are not included.
+
+### Development mode
+
+If you want to develop some new features in the application, run it locally will be preferred. In this case, you need to install pipenv to your global system with the commando `pip install pipenv`.
+
+Once pipenv is installed, run `pipenv shell` to create and activate a virtualenv for the project. After that, run `pipenv install` to install all dependencies as described in the `Pipfile`.
+
+Then, you can run the project with the command `python manage.py runserver 0.0.0.0:8000` instead of using Docker image to run the project. 
+
+> If you are running the web application from local pipenv, you need to be sure that `DATABSE_HOST=localhost` in your .env file. Then, start the databse with command `docker-compose up -d db`. 
+
+You can add/remove dependencies as you want, and once your project is working fine, you can lock dependencies to reproduce the same environment when the app will run in productio. So, execute the command `pipenv lock`.
+
+Compile again the Docker image with the command `docker-compose build django-rest-api` and before to execute the container, check that `DATABSE_HOST=db` in your .env file. 
 
 </details>
 

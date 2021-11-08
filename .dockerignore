@@ -9,3 +9,5 @@ Dockerfile
 docker-compose.yml
 env
 .dockerignore
+.env
+CHANGELOG.md

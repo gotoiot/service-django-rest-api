@@ -4,6 +4,14 @@ import os
 import sys
 
 
+def load_env_vars():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv() 
+    except:
+        print("Error while trying to load env var from '.env' file")
+
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangorestapi.settings')
@@ -19,4 +27,5 @@ def main():
 
 
 if __name__ == '__main__':
+    load_env_vars()
     main()

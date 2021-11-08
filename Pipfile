@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+djangorestframework = "*"
+psycopg2-binary = ">=2.8"
+dj-rest-auth = {extras = ["with_social"], version = "*"}
+djangorestframework-simplejwt = "*"
+Django = ">=3.0,<4.0"
+python-dotenv = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

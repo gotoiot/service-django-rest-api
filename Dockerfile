@@ -1,28 +1,38 @@
 # pull the official base image
-FROM python:3.8
+FROM python:3.8-slim as base
 
-RUN useradd -ms /bin/bash gotoiot
-
-# set work directory
-RUN mkdir /app
-ADD requirements.txt /app
-WORKDIR /app
-
-# set environment variables
+# Setup env
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH $PYTHONPATH:/app
+ENV PYTHONFAULTHANDLER 1
 
-# install dependencies
-RUN pip install --upgrade pip 
-RUN pip install -r requirements.txt
+FROM base AS python-deps
 
-STOPSIGNAL SIGHUP
+# Install pipenv and compilation dependencies
+RUN pip install pipenv
+RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-# Copy all code files into image. Uncomment for production
-ADD . /app
+# Install python dependencies in /.venv
+COPY Pipfile .
+COPY Pipfile.lock .
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
+
+FROM base AS runtime
+
+# Copy virtual env from python-deps stage
+COPY --from=python-deps /.venv /.venv
+ENV PATH="/.venv/bin:$PATH"
+
+# Create and switch to a new user
+RUN useradd --create-home appuser
+WORKDIR /home/appuser
+USER appuser
+
+# Install application into container
+COPY . .
 
 EXPOSE 8000
 
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD su gotoiot -c 'python manage.py runserver 0.0.0.0:8000'
+# Run the application
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

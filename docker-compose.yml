@@ -3,14 +3,12 @@ version: "3"
 services:
   django-rest-api:
     build: .
-    # volumes:
-    #   - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
     env_file:
-      - env
+      - .env
   db:
     image: postgres:13
     volumes:
@@ -19,3 +17,5 @@ services:
       - POSTGRES_DB=${DATABSE_NAME:-codedb}
       - POSTGRES_USER=${DATABSE_USER:-postgres}
       - POSTGRES_PASSWORD=${DATABSE_PASS:-postgres}
+    ports:
+      - "5432:5432"
